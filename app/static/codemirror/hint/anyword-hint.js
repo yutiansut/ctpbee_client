@@ -1,6 +1,6 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: https://codemirror.net/LICENSE
-var kw = [' ', 'False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class', 'continue',
+var kw = [' ', 'async', 'await', 'False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class', 'continue',
     'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if',
     'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return',
     'try', 'while', 'with', 'yield', 'abs', 'divmod', 'input', 'open', 'all', 'enumerate',
@@ -9,7 +9,8 @@ var kw = [' ', 'False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class',
     'float', 'list', 'raw_input', 'callable', 'format', 'locals', 'reduce', 'chr', 'frozenset',
     'long', 'reload', 'classmethod', 'getattr', 'map', 'repr', 'cmp', 'globals', 'max', 'reversed',
     'compile', 'hasattr', 'memoryview', 'round', 'complex', 'hash', 'min', 'set', 'delattr', 'help',
-    'next', 'setattr', 'dict', 'hex', 'object', 'slice', 'dir', 'id', 'oct', 'sorted']
+    'next', 'setattr', 'dict', 'hex', 'object', 'slice', 'dir', 'id', 'oct', 'sorted',
+    '@property', '@classmethod', '@staticmethod']
 
 var pp = kw.join(" ");
 (function (mod) {
