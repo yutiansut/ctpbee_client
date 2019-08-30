@@ -258,9 +258,9 @@ class RunCode(MethodView):
         return jsonify(output.decode('utf-8'))
 
 
-@io.on('disconnect', namespace='/check_disconnect')
-def disconnect():
-    """Remove temp file associated with current session"""
-    print('断开连接', session)
-    if session.get('file_name') and os.path.exists(session["file_name"]):
-        os.remove(session["file_name"])
+# @io.on('disconnect', namespace='/check_disconnect')
+# def disconnect():
+#     """Remove temp file associated with current session"""
+#     print('断开连接', session)
+#     if session.get('file_name') and os.path.exists(session["file_name"]):
+#         os.remove(session["file_name"])

@@ -9,8 +9,7 @@ var kw = [' ', 'async', 'await', 'False', 'None', 'True', 'and', 'as', 'assert',
     'float', 'list', 'raw_input', 'callable', 'format', 'locals', 'reduce', 'chr', 'frozenset',
     'long', 'reload', 'classmethod', 'getattr', 'map', 'repr', 'cmp', 'globals', 'max', 'reversed',
     'compile', 'hasattr', 'memoryview', 'round', 'complex', 'hash', 'min', 'set', 'delattr', 'help',
-    'next', 'setattr', 'dict', 'hex', 'object', 'slice', 'dir', 'id', 'oct', 'sorted',
-    '@property', '@classmethod', '@staticmethod']
+    'next', 'setattr', 'dict', 'hex', 'object', 'slice', 'dir', 'id', 'oct', 'sorted']
 
 var pp = kw.join(" ");
 (function (mod) {

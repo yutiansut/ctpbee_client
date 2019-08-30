@@ -31,6 +31,43 @@ $(document).ready(function () {
             }];//Check if pylint output is empty.
             if (data == null) {
                 result_cb(error_list);
+            }else{
+                var data_length = 0;
+                if (data != null) {
+                    data_length = Object.keys(data).length;
+                }
+                for (var x = 0; x < data_length; x += 1) {
+                    if (data[x] == null) {
+                        continue
+                    }
+                    number = data[x].line
+                    code = data[x].code
+                    codeinfo = data[x].error_info
+                    severity = code[0]
+                    moreinfo = data[x].message
+                    message = data[x].error
+
+                    //Set severity to necessary parameters
+                    if (severity == "E" || severity == "e") {
+                        severity = "error";
+                        severity_color = "red";
+                    } else if (severity == "W" || severity == "w") {
+                        severity = "warning";
+                        severity_color = "yellow";
+                    }
+                    //Push to error list
+                    error_list.push({
+                        line_no: number,
+                        column_no_start: null,
+                        column_no_stop: null,
+                        fragment: null,
+                        message: message,
+                        severity: severity
+                    });
+
+
+                }
+                result_cb(error_list);
             }
         }
 
@@ -53,7 +90,7 @@ $(document).ready(function () {
         //代码折叠
         lineWrapping: true,
         foldGutter: true,
-        gutters: ["CodeMirror-lint-markers", "CodeMirror-foldgutter"],
+        gutters: ["CodeMirror-lint-markers"],
 
         lineNumbers: true,
         indentUnit: 4,
@@ -69,6 +106,25 @@ $(document).ready(function () {
             "check_cb": check_syntax
         },
     });
+
+    //显示
+    function show(msg) {
+        $("#info").fadeIn();
+        $('#info-content').html(msg).fadeIn();
+    }
+
+    //隐藏
+    function hide() {
+        $("#info").fadeOut();
+    }
+
+    $('#btn').click(function () {
+    })
+    $("#close").click(function () {
+        hide()
+    })
+
+
     //Actually Run in Python
     $("#run").click(function () {
         $.post('/run_code', {
@@ -79,8 +135,9 @@ $(document).ready(function () {
         }, 'json');
 
         function print_result(data) {
-            document.getElementById('output').innerHTML = '';
-            $("#output").append("<pre>" + data + "</pre>");
-        }
+            show(data)
+        };
+
+
     });
 });
