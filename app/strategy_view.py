@@ -7,7 +7,7 @@ v2.1.0 created on 5/10/19
 Improve efficiency and design
  """
 from .pylint_lib import pylint_dict_final
-from flask import request, jsonify, session, redirect, url_for
+from flask import request, jsonify, session, redirect, url_for,current_app
 import tempfile, mmap, os, re
 from datetime import datetime
 from pylint import epylint as lint
@@ -15,7 +15,6 @@ from subprocess import Popen, PIPE, STDOUT
 from multiprocessing import Pool, cpu_count
 
 from flask.views import MethodView
-from .ext import io
 
 is_linux = True
 
@@ -30,9 +29,8 @@ def login_required(f):
     """Checks whether user is logged in or raises error 401."""
 
     def decorator(*args, **kwargs):
-        global current_user
         try:
-            if not current_user:
+            if not current_app.config.get('CURRENT_USER'):
                 return redirect(url_for('login'))
         except NameError:
             return redirect(url_for('login'))
@@ -203,7 +201,7 @@ def format_errors(pylint_text):
 
 
 class CheckCode(MethodView):
-    # decorators = [login_required]
+    decorators = [login_required]
 
     def post(self):
         """Run pylint on code and get output
@@ -234,7 +232,7 @@ class CheckCode(MethodView):
 # Run python in secure system
 
 class RunCode(MethodView):
-    # decorators = [login_required]
+    decorators = [login_required]
     """Run python 3 code
         :return: JSON object of python 3 output
             {

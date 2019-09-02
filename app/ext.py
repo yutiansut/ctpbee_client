@@ -1,5 +1,8 @@
 from flask_socketio import SocketIO
 
 io = SocketIO()
-global current_user
-current_user = None
+
+
+@io.on('my_connect')
+def connect_handle(json):
+    print('received message: ', json)
