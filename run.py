@@ -14,6 +14,6 @@ if __name__ == '__main__':
     # os.system(f"cd {current_dir_path} && gunicorn -b 127.0.0.1:5000 --worker-class eventlet -w 1 run:app")
 
     ## development  --> 你应该在此模式下卸载eventlet包
-    app.run()
+    app.run(host='0.0.0.0')
     # 生产环境可以注释
     # webbrowser.open("http://127.0.0.1:5000/login")

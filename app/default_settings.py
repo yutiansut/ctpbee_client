@@ -30,9 +30,15 @@ class DefaultSettings(CtpbeeApi):
         self.io.emit('log', data)
 
     def on_account(self, account: AccountData) -> None:
+        data_list = []
+        for k, v in account._to_dict().items():
+            temp = {}
+            temp['key'] = k
+            temp['value'] = v
+            data_list.append(temp)
         data = {
             "type": "account",
-            "data": account._to_dict()
+            "data": data_list
         }
         self.io.emit('account', data)
 
@@ -156,28 +162,35 @@ class DefaultSettings(CtpbeeApi):
         pass
 
 
-def true_response(data="", message="操作成功执行"):
-    true_response = {
-        "result": "success",
-        "data.json": data,
-        "message": message
+def true_response(msg='', data=''):
+    res = {
+        'success': True,
+        'msg': msg,
+        'data': data
     }
-    return make_response(json.dumps(true_response))
+    return make_response(json.dumps(res))
 
 
-def false_response(data="", message="出现错误, 请检查"):
-    false_response = {
-        "result": "failed",
-        "data.json": data,
-        "message": message
+def false_response(msg='', data=''):
+    res = {
+        'success': False,
+        'msg': msg,
+        'data': data
     }
-    return make_response(json.dumps(false_response))
+    return make_response(json.dumps(res))
 
 
-def warning_response(data="", message="警告"):
-    warning_response = {
-        "result": "warning",
-        "data.json": data,
-        "message": message
+def true_return(msg='', data=''):
+    return {
+        'success': True,
+        'msg': msg,
+        'data': data
     }
-    return make_response(json.dumps(warning_response))
+
+
+def false_return(msg='', data=''):
+    return {
+        'success': False,
+        'msg': msg,
+        'data': data
+    }

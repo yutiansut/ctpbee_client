@@ -1,8 +1,8 @@
 from flask_socketio import SocketIO
+from colour_printing  import ColourPrint
 
+
+log = ColourPrint()
 io = SocketIO()
 
 
-@io.on('my_connect')
-def connect_handle(json):
-    print('received message: ', json)

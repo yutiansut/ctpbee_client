@@ -7,7 +7,7 @@ v2.1.0 created on 5/10/19
 Improve efficiency and design
  """
 from .pylint_lib import pylint_dict_final
-from flask import request, jsonify, session, redirect, url_for,current_app
+from flask import request, jsonify, session
 import tempfile, mmap, os, re
 from datetime import datetime
 from pylint import epylint as lint
@@ -15,6 +15,7 @@ from subprocess import Popen, PIPE, STDOUT
 from multiprocessing import Pool, cpu_count
 
 from flask.views import MethodView
+from app.auth import auth_required
 
 is_linux = True
 
@@ -23,20 +24,6 @@ if os.name == "nt":
 
 # Get number of cores for multiprocessing
 num_cores = cpu_count()
-
-
-def login_required(f):
-    """Checks whether user is logged in or raises error 401."""
-
-    def decorator(*args, **kwargs):
-        try:
-            if not current_app.config.get('CURRENT_USER'):
-                return redirect(url_for('login'))
-        except NameError:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-
-    return decorator
 
 
 # Slow down if user clicks "Run" too many times
@@ -201,8 +188,7 @@ def format_errors(pylint_text):
 
 
 class CheckCode(MethodView):
-    decorators = [login_required]
-
+    @auth_required
     def post(self):
         """Run pylint on code and get output
             :return: JSON object of pylint errors
@@ -232,7 +218,6 @@ class CheckCode(MethodView):
 # Run python in secure system
 
 class RunCode(MethodView):
-    decorators = [login_required]
     """Run python 3 code
         :return: JSON object of python 3 output
             {
@@ -241,6 +226,7 @@ class RunCode(MethodView):
     """
 
     # Don't run too many times
+    @auth_required
     def post(self):
         if slow():
             return jsonify(
@@ -254,11 +240,3 @@ class RunCode(MethodView):
         output = p.stdout.read()
 
         return jsonify(output.decode('utf-8'))
-
-
-# @io.on('disconnect', namespace='/check_disconnect')
-# def disconnect():
-#     """Remove temp file associated with current session"""
-#     print('断开连接', session)
-#     if session.get('file_name') and os.path.exists(session["file_name"]):
-#         os.remove(session["file_name"])

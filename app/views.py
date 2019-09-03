@@ -2,7 +2,7 @@ from datetime import datetime
 from threading import Thread
 from time import sleep
 
-from flask import redirect, url_for, session, current_app
+from flask import redirect, url_for, session, current_app, jsonify
 from flask import request, render_template
 from flask.views import MethodView
 
@@ -10,41 +10,48 @@ from ctpbee import CtpBee, current_app as bee_current_app
 from ctpbee import helper
 from .default_settings import DefaultSettings, true_response, false_response
 from .ext import io
+from app.model import session, User
+from app.auth import Auth, auth_required
+from time import time
 
 is_send = True
 
 
-def login_required(f):
-    """Checks whether user is logged in or raises error 401."""
-
-    def decorator(*args, **kwargs):
-        try:
-            if not current_app.config.get("CURRENT_USER"):
-                return redirect(url_for('login'))
-        except NameError:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-
-    return decorator
-
-
 class AccountView(MethodView):
-    decorators = [login_required]
-
     def get(self):
         return render_template("account.html")
 
 
-class LoginView(MethodView):
-    def get(self):
-        return render_template("login.html")
+@io.on('my_connect')
+def connect_handle(json):
+    print('received message: ', json)
+    if json == current_app.config['SOCKET_IO_KEY']:
+        current_app.config['SOCKET_IO'] = int(time())
+        io.emit('customEmit', 'ok')
+    else:
+        return False
 
+
+def socket_connect():
+    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 60:
+        return True
+    return False
+
+
+class LoginView(MethodView):
     def post(self):
+        if not socket_connect():
+            return false_response(msg="登录出现错误:停留太久,刷新试试")
+
         from ctpbee import current_app as bee_current_app
         if bee_current_app != None:
-            current_app.config['CURRENT_USER'] = bee_current_app.config["CONNECT_INFO"]['userid']
-            return true_response(message="登录成功")
+            userid = bee_current_app.config["CONNECT_INFO"]['userid']
+            current_app.config['CURRENT_USER'] = userid
+            token = Auth.authenticate(userid=userid)
+            return token
+
         info = request.values
+        print(info)
         app = CtpBee(name=info.get("username"), import_name=__name__)
         login_info = {
             "CONNECT_INFO": info,
@@ -57,8 +64,10 @@ class LoginView(MethodView):
         app.start()
         sleep(1)
         if not app.td_login_status:
-            return false_response(message="登录出现错误")
+            return false_response(msg="登录出现错误")
+
         app.config['CURRENT_USER'] = login_info['CONNECT_INFO']['userid']
+        User.add(info)  # 写入数据库，无密码
 
         def run(app: CtpBee):
             while True:
@@ -69,50 +78,47 @@ class LoginView(MethodView):
 
         p = Thread(target=run, args=(app,))
         p.start()
-        return true_response(message="登录成功")
+        token = Auth.authenticate(userid=info.get('userid'))
+        return token
 
 
 class IndexView(MethodView):
-    decorators = [login_required]
-
     def get(self):
         return render_template("index.html", username=current_app.config.get('CURRENT_USER'))
 
 
 class MarketView(MethodView):
-    decorators = [login_required]
-
+    @auth_required
     def post(self):
         symbol = request.values.get("symbol")
         try:
             bee_current_app.subscribe(symbol)
-            return true_response(message=f"订阅{symbol}成功")
+            return true_response(msg=f"订阅{symbol}成功")
         except Exception:
-            return false_response(message=f"订阅{symbol}失败")
+            return false_response(msg=f"订阅{symbol}失败")
 
+    @auth_required
     def put(self):
         """ 更新contract"""
         try:
             contracts = [contract.symbol for contract in bee_current_app.recorder.get_all_contracts()]
             io.emit("contract", contracts)
         except Exception:
-            return false_response(message="更新合约失败", )
-        return true_response(message="更新合约列表完成")
+            return false_response(msg="更新合约失败", )
+        return true_response(msg="更新合约列表完成")
 
     def get(self):
         return render_template("market.html")
 
 
 class OrderView(MethodView):
-    decorators = [login_required]
 
     def get(self, symbol):
         return render_template("send_order.html", symbol=symbol)
 
 
 class OpenOrderView(MethodView):
-    decorators = [login_required]
-
+    @auth_required
     def post(self):
         """ 发单 """
         info = request.values.to_dict()
@@ -133,11 +139,12 @@ class OpenOrderView(MethodView):
             sleep(0.2)
             order = bee_current_app.recorder.get_order(req_id)
             if order.status.value == "拒单":
-                return false_response(message=bee_current_app.recorder.get_new_error()['data']['ErrorMsg'])
-            return true_response(message="成功下单")
+                return false_response(msg=bee_current_app.recorder.get_new_error()['data']['ErrorMsg'])
+            return true_response(msg="成功下单")
         except Exception as e:
-            return false_response(message="下单失败")
+            return false_response(msg="下单失败")
 
+    @auth_required
     def delete(self):
         """ 撤单 """
         info = request.values
@@ -147,21 +154,19 @@ class OpenOrderView(MethodView):
         req = helper.generate_cancel_req_by_str(symbol=local_symbol, exchange=exchange, order_id=order_id)
         try:
             bee_current_app.cancel_order(req)
-            return true_response(message="成功撤单")
+            return true_response(msg="成功撤单")
         except Exception:
-            return false_response(message="撤单失败")
+            return false_response(mgs="撤单失败")
 
 
 class LogoutView(MethodView):
-    decorators = [login_required]
 
     def get(self):
         current_app.config['CURRENT_USER'] = None
-        return true_response(message="注销成功")
+        return true_response(msg="注销成功")
 
 
 class WriteStrategy(MethodView):
-    decorators = [login_required]
 
     def get(self):
         session["count"] = 0
