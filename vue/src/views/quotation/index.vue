@@ -8,22 +8,13 @@
     <el-button type="primary" @click="getSymbol()">更新合约</el-button>
     <!-- <el-button type="primary" @click="handleEdit('ag1910')">下單</el-button> -->
     <h4>订阅列表</h4>
-    <el-table border style="width: 100%">
-
-    </el-table>
-    <table>
-      <tr>
-        <td></td>
-      </tr>
-    </table>
-
     <el-table :data="symbolArr" border style="width: 100%">
       <el-table-column prop="name" label="中文名"></el-table-column>
       <el-table-column prop="symbol" label="品种"></el-table-column>
       <el-table-column prop="last_price" label="行情"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" @click="handleEdit('ag1910')">
+          <el-button type="primary" @click="order(scope.row.symbol)">
             前往下单
             <i class="el-icon-upload el-icon--right"></i>
           </el-button>
@@ -67,7 +58,6 @@ export default {
   },
   methods: {
     subscribe(symbol) {
-      console.log(symbol);
       if(!symbol){
         this.tip("error","请先选择",this)
         return
@@ -91,6 +81,9 @@ export default {
           console.log(err);
         });
     },
+    order(symbol){
+      console.log(symbol)
+    },
     getSymbol() {
       let token = sessionStorage.getItem("token");
       this.$axios
@@ -100,7 +93,6 @@ export default {
           }
         })
         .then(res => {
-          console.log(res);
           let returnData=res.data
           if(returnData.success===true){
             this.tip("success",returnData.msg,this)

@@ -8,8 +8,10 @@
 // at http://marijnhaverbeke.nl/blog/#cm-internals .
 
 (function (global, factory) {
-  console.log(typeof exports,typeof module)
+  console.log(factory())
+  // console.log(typeof exports === 'object' && typeof module !== 'undefined')
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  // typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global.CodeMirror = factory());
 }(this, (function () { 'use strict';
