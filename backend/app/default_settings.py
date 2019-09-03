@@ -112,7 +112,6 @@ class DefaultSettings(CtpbeeApi):
             except FileNotFoundError:
                 pass
             self.local_status[tick.local_symbol] = True
-
         with open(f"{os.path.dirname(__file__)}/static/json/{tick.symbol}.json", "w") as f:
             from json import dump
             update_result = {

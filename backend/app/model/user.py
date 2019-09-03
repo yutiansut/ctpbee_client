@@ -13,7 +13,7 @@ class User(Base):
     auth_code = Column(String(32))
     td_address = Column(String(32))
     md_address = Column(String(32))
-    login_time = Column(String(32))
+    login_time = Column(Integer)
 
     @classmethod
     def add(cls, data, **kwargs):

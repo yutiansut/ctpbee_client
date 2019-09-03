@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="62f0bdf4-327e-4e86-97fb-9143c0d5ca33" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/fonts/YaHeiMonacoHybrid.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/backend.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/default_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/default_settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/model/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/model/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/setting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/addon/dialog.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/addon/dialog.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/addon/search.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/addon/searchcursor.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/codemirror.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/hint/anyword-hint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/hint/show-hint.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/hint/show-hint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/lib/codemirror.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/lib/lint.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/lib/lint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/lib/matchbrackets.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/codemirror/lib/python.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/css/animate.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/css/bootstrap.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/css/bootstrap.min.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/css/fonts.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/fonts/YaHeiMonacoHybrid.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/icon/bee.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/icon/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/icon/github.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/bootstrap.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/bootstrap.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/jquery.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/jquery.placeholder.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/jquery.waypoints.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/main.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/modernizr.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/pargms.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/pylint_js/cm-validator-remote.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/pylint_js/javascript.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/pylint_js/require.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/pylint_js/socketio.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/socket.io.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/js/trade_operation.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/TA007.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/a1911.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/a2007.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/ag1910.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/ag1912.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/ag2006.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/ag2008.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/al1910.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/al2002.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/al2007.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/al2008.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/au1910.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/au2008.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/fb2007.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/rb1910.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/y2007.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/zn1910.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/json/zn1912.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/dist/kline.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/examples/mock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/examples/polling.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/examples/requirejs.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/examples/stomp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/lib/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/lib/jquery.mousewheel.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/lib/require.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/lib/sockjs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/lib/stomp.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/screenshot_dark.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/screenshot_light.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/entry.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/dropdown_b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/dropdown_w.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/dropup_b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/dropup_w.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/size.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/size_d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/size_l.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/tool_d_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/tool_d_push.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/tool_l_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/img/tool_l_push.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/areas.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/chart.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/chart_manager.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/chart_settings.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/cname.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/control.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/cpoint.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/ctool_manager.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/ctools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/data_providers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/data_sources.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/exprs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/firebase.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/indicators.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/kline.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/kline_trade.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/layouts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/mevent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/named_object.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/plotters.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/ranges.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/templates.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/themes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/timeline.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/js/util.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/src/view/tpl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/kline/webpack.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/static/picture/sidebar.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/account.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/market.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/send_order.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/templates/write_strategy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/requirement.txt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/requirement.txt" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1QJY1e1xFjb0K3J7662F1OoV8j9" />
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.run (1)">
+    <configuration name="run (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ctpbee_client" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/backend" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/backend/run.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="run" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="ctpbee_client" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.run (1)" />
+        <item itemvalue="Python.run" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="62f0bdf4-327e-4e86-97fb-9143c0d5ca33" name="Default Changelist" comment="" />
+      <created>1567489951800</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1567489951800</updated>
+      <workItem from="1567489954976" duration="1562000" />
+      <workItem from="1567492064421" duration="98000" />
+      <workItem from="1567498887151" duration="5000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="743" y="230" key="FileChooserDialogImpl" />
+    <state x="743" y="230" key="FileChooserDialogImpl/1920.1080" />
+    <state width="1866" height="314" key="GridCell.Tab.0.bottom" />
+    <state width="1866" height="314" key="GridCell.Tab.0.bottom/1920.1080" />
+    <state width="1866" height="314" key="GridCell.Tab.0.center" />
+    <state width="1866" height="314" key="GridCell.Tab.0.center/1920.1080" />
+    <state width="1866" height="314" key="GridCell.Tab.0.left" />
+    <state width="1866" height="314" key="GridCell.Tab.0.left/1920.1080" />
+    <state width="1866" height="314" key="GridCell.Tab.0.right" />
+    <state width="1866" height="314" key="GridCell.Tab.0.right/1920.1080" />
+    <state x="452" y="178" key="SettingsEditor" />
+    <state x="452" y="178" key="SettingsEditor/1920.1080" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ctpbee_client$run.coverage" NAME="run Coverage Results" MODIFIED="1567490241207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ctpbee_client$run__1_.coverage" NAME="run (1) Coverage Results" MODIFIED="1567492108031" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+  </component>
+</project>

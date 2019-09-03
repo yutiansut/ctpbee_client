@@ -3,7 +3,7 @@ import json
 from functools import wraps
 import time
 import jwt
-from flask import current_app
+from flask import current_app,request
 
 from app.setting import JWT_SECRET_KEY
 from app.ext import log
@@ -124,7 +124,7 @@ def auth_required(view_func):
 
     @wraps(view_func)
     def wrapper(self):
-        result = Auth.identify(self.request)
+        result = Auth.identify(request)
         if result['success'] and result['data']:
             log.success("Token验证成功")
             current_app.config['CURRENT_USER'] = result['data']

@@ -17,11 +17,6 @@ from time import time
 is_send = True
 
 
-class AccountView(MethodView):
-    def get(self):
-        return render_template("account.html")
-
-
 @io.on('my_connect')
 def connect_handle(json):
     print('received message: ', json)
@@ -82,11 +77,6 @@ class LoginView(MethodView):
         return token
 
 
-class IndexView(MethodView):
-    def get(self):
-        return render_template("index.html", username=current_app.config.get('CURRENT_USER'))
-
-
 class MarketView(MethodView):
     @auth_required
     def post(self):
@@ -106,15 +96,6 @@ class MarketView(MethodView):
         except Exception:
             return false_response(msg="更新合约失败", )
         return true_response(msg="更新合约列表完成")
-
-    def get(self):
-        return render_template("market.html")
-
-
-class OrderView(MethodView):
-
-    def get(self, symbol):
-        return render_template("send_order.html", symbol=symbol)
 
 
 class OpenOrderView(MethodView):
@@ -157,13 +138,6 @@ class OpenOrderView(MethodView):
             return true_response(msg="成功撤单")
         except Exception:
             return false_response(mgs="撤单失败")
-
-
-class LogoutView(MethodView):
-
-    def get(self):
-        current_app.config['CURRENT_USER'] = None
-        return true_response(msg="注销成功")
 
 
 class WriteStrategy(MethodView):
