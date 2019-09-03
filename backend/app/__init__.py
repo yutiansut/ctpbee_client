@@ -1,6 +1,6 @@
 # this is the web client in here  you can use it to trade or read market fastly
 from flask import Flask
-
+import functools
 from .ext import io
 from .views import LoginView, MarketView, OpenOrderView, WriteStrategy
 from .strategy_view import RunCode, CheckCode
@@ -22,4 +22,14 @@ def create_app():
     io.init_app(app, cors_allowed_origins="*")
     CORS(app)
 
+    def emit_wrap(func):
+        @functools.wraps(func)
+        def decorate(*args, **kwargs):
+            if app.config.get('SOCKET_HEARTBEAT'):
+                func(*args, **kwargs)
+            return
+
+        return decorate
+
+    io.emit = emit_wrap(io.emit)
     return app

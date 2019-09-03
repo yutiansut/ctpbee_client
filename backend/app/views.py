@@ -1,8 +1,9 @@
+import functools
 from datetime import datetime
 from threading import Thread
 from time import sleep
-
-from flask import redirect, url_for, session, current_app, jsonify
+from flask_socketio import disconnect
+from flask import session, current_app
 from flask import request, render_template
 from flask.views import MethodView
 
@@ -10,8 +11,8 @@ from ctpbee import CtpBee, current_app as bee_current_app
 from ctpbee import helper
 from .default_settings import DefaultSettings, true_response, false_response
 from .ext import io
-from app.model import session, User
-from app.auth import Auth, auth_required
+from app.model import User
+from app.auth import Auth, auth_required, heartbeat
 from time import time
 
 is_send = True
@@ -19,7 +20,7 @@ is_send = True
 
 @io.on('my_connect')
 def connect_handle(json):
-    print('received message: ', json)
+    print('connect: ', json)
     if json == current_app.config['SOCKET_IO_KEY']:
         current_app.config['SOCKET_IO'] = int(time())
         io.emit('customEmit', 'ok')
@@ -27,8 +28,21 @@ def connect_handle(json):
         return False
 
 
+@io.on('heartbeat')
+def heartbeat_handle(token):
+    result = heartbeat(token)
+    if result['success']:
+        current_app.config['SOCKET_HEARTBEAT'] = True
+    else:
+        current_app.config['SOCKET_HEARTBEAT'] = False
+
+
 def socket_connect():
-    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 60:
+    """
+    socket 连接
+    :return:
+    """
+    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 90:
         return True
     return False
 
@@ -36,12 +50,11 @@ def socket_connect():
 class LoginView(MethodView):
     def post(self):
         if not socket_connect():
-            return false_response(msg="登录出现错误:停留太久,刷新试试")
+            return false_response(msg="停留太久,刷新试试")
 
         from ctpbee import current_app as bee_current_app
         if bee_current_app != None:
             userid = bee_current_app.config["CONNECT_INFO"]['userid']
-            current_app.config['CURRENT_USER'] = userid
             token = Auth.authenticate(userid=userid)
             return token
 
@@ -61,7 +74,6 @@ class LoginView(MethodView):
         if not app.td_login_status:
             return false_response(msg="登录出现错误")
 
-        app.config['CURRENT_USER'] = login_info['CONNECT_INFO']['userid']
         User.add(info)  # 写入数据库，无密码
 
         def run(app: CtpBee):
