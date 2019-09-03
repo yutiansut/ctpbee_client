@@ -7,7 +7,6 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 app = create_app()
 
-
 if __name__ == '__main__':
     ## production
     # current_dir_path = os.path.abspath(os.path.dirname(__file__))

@@ -92,6 +92,7 @@ class MarketView(MethodView):
         """ 更新contract"""
         try:
             contracts = [contract.symbol for contract in bee_current_app.recorder.get_all_contracts()]
+            contracts.sort(key=lambda v: v.upper())
             io.emit("contract", contracts)
         except Exception:
             return false_response(msg="更新合约失败", )
