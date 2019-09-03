@@ -1,2 +1,10 @@
 venv
-backend/ctp_user.db
+
+*.db
+
+*.idea
+
+*.pyc
+
+*.build
+
