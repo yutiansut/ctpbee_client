@@ -3,7 +3,7 @@ import json
 from functools import wraps
 import time
 import jwt
-from flask import current_app,request
+from flask import current_app, request
 
 from app.setting import JWT_SECRET_KEY
 from app.ext import log
@@ -82,6 +82,7 @@ class Auth:
                 "login_time": login_time,
                 "userid": user.userid
             }
+            current_app.config['USER_DATA'] = user_info
             token = Auth.encode_auth_token(user_info)
             return true_response(data=token.decode(), msg='登录成功')
 
@@ -102,11 +103,11 @@ class Auth:
                 if isinstance(payload, str):
                     result = false_return(msg=payload)
                 else:
-                    user = session.query(User).filter_by(userid=payload['data']['userid']).first()
-                    if user is None:
+                    user = current_app.config.get('USER_DATA')
+                    if user is None or user and user['userid'] != payload['data']['userid']:
                         result = false_return(msg='找不到该用户信息')
                     else:
-                        if user.login_time == payload['data']['login_time']:
+                        if user['login_time'] == payload['data']['login_time']:
                             result = true_return(data=user, msg='请求成功')
                         else:
                             result = false_return(msg='Token已过期')
@@ -127,10 +128,28 @@ def auth_required(view_func):
         result = Auth.identify(request)
         if result['success'] and result['data']:
             log.success("Token验证成功")
-            current_app.config['CURRENT_USER'] = result['data']
             return view_func(self)
         else:
             log.error("Token验证失败: " + result['msg'])
             return false_response(msg=result['msg'])
 
     return wrapper
+
+
+def heartbeat(auth_token):
+    payload = Auth.decode_auth_token(auth_token)
+    if isinstance(payload, str):
+        result = false_return(msg=payload)
+    else:
+        user = current_app.config.get('USER_DATA')
+        if user is None or user and user['userid'] != payload['data']['userid']:
+            log.error('心跳检测：找不到该用户信息')
+            result = false_return(msg='心跳检测：找不到该用户信息')
+        else:
+            if user['login_time'] == payload['data']['login_time']:
+                log.success('心跳检测：请求成功')
+                result = true_return(msg='心跳检测：请求成功')
+            else:
+                log.error('心跳检测：Token已过期')
+                result = false_return(msg='心跳检测：Token已过期')
+    return result
