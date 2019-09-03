@@ -16,8 +16,6 @@ export default {
     };
   },
   sockets:{
-    // 通信的name
-    //这里是监听connect事件
     connect: function(){
       console.log('connect......')
     },

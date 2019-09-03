@@ -5512,8 +5512,6 @@ window.CodeMirror = (function() {
   // THE END
 
   CodeMirror.version = "3.11";
-  // console.log(111, CodeMirror)
   return CodeMirror;
 })();
-console.log(CodeMirror)
 export default CodeMirror
