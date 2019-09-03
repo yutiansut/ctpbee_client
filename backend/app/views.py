@@ -3,7 +3,7 @@ from datetime import datetime
 from threading import Thread
 from time import sleep
 from flask_socketio import disconnect
-from flask import redirect, url_for, session, current_app, jsonify
+from flask import session, current_app
 from flask import request, render_template
 from flask.views import MethodView
 
@@ -11,27 +11,16 @@ from ctpbee import CtpBee, current_app as bee_current_app
 from ctpbee import helper
 from .default_settings import DefaultSettings, true_response, false_response
 from .ext import io
-from app.model import session, User
+from app.model import User
 from app.auth import Auth, auth_required, heartbeat
 from time import time
 
 is_send = True
 
 
-def authenticated_only(f):
-    @functools.wraps(f)
-    def wrapped(*args, **kwargs):
-        if not current_user.is_authenticated:
-            disconnect()
-        else:
-            return f(*args, **kwargs)
-
-    return wrapped
-
-
 @io.on('my_connect')
 def connect_handle(json):
-    print('received message: ', json)
+    print('connect: ', json)
     if json == current_app.config['SOCKET_IO_KEY']:
         current_app.config['SOCKET_IO'] = int(time())
         io.emit('customEmit', 'ok')
@@ -53,7 +42,7 @@ def socket_connect():
     socket 连接
     :return:
     """
-    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 60:
+    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 90:
         return True
     return False
 
@@ -61,7 +50,7 @@ def socket_connect():
 class LoginView(MethodView):
     def post(self):
         if not socket_connect():
-            return false_response(msg="登录出现错误:停留太久,刷新试试")
+            return false_response(msg="停留太久,刷新试试")
 
         from ctpbee import current_app as bee_current_app
         if bee_current_app != None:

@@ -82,7 +82,7 @@ class Auth:
                 "login_time": login_time,
                 "userid": user.userid
             }
-            current_app.config['USER_DATA'] = user_info
+            current_app.config['CURRENT_USER'] = user_info
             token = Auth.encode_auth_token(user_info)
             return true_response(data=token.decode(), msg='登录成功')
 
@@ -103,7 +103,7 @@ class Auth:
                 if isinstance(payload, str):
                     result = false_return(msg=payload)
                 else:
-                    user = current_app.config.get('USER_DATA')
+                    user = current_app.config.get('CURRENT_USER')
                     if user is None or user and user['userid'] != payload['data']['userid']:
                         result = false_return(msg='找不到该用户信息')
                     else:
@@ -141,15 +141,15 @@ def heartbeat(auth_token):
     if isinstance(payload, str):
         result = false_return(msg=payload)
     else:
-        user = current_app.config.get('USER_DATA')
+        user = current_app.config.get('CURRENT_USER')
         if user is None or user and user['userid'] != payload['data']['userid']:
-            log.error('心跳检测：找不到该用户信息')
+            log.warn('心跳检测：找不到该用户信息')
             result = false_return(msg='心跳检测：找不到该用户信息')
         else:
             if user['login_time'] == payload['data']['login_time']:
                 log.success('心跳检测：请求成功')
                 result = true_return(msg='心跳检测：请求成功')
             else:
-                log.error('心跳检测：Token已过期')
+                log.warn('心跳检测：Token已过期')
                 result = false_return(msg='心跳检测：Token已过期')
     return result
