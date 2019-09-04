@@ -7,7 +7,7 @@ v2.1.0 created on 5/10/19
 Improve efficiency and design
  """
 from .pylint_lib import pylint_dict_final
-from flask import request, jsonify, session
+from flask import request, session
 import tempfile, mmap, os, re
 from datetime import datetime
 from pylint import epylint as lint
@@ -16,6 +16,8 @@ from multiprocessing import Pool, cpu_count
 
 from flask.views import MethodView
 from app.auth import auth_required
+from app.global_var import G
+from app.default_settings import true_response, false_response
 
 is_linux = True
 
@@ -28,9 +30,10 @@ num_cores = cpu_count()
 
 # Slow down if user clicks "Run" too many times
 def slow():
-    session["count"] += 1
-    time = datetime.now() - session["time_now"]
-    if float(session["count"]) / float(time.total_seconds()) > 5:
+    se = G.session[session['token']]
+    se["count"] += 1
+    time = datetime.now() - se["time_now"]
+    if float(se["count"]) / float(time.total_seconds()) > 5:
         return True
     return False
 
@@ -53,15 +56,16 @@ def evaluate_pylint(text):
     """
     # Open temp file for specific session.
     # IF it doesn't exist (aka the key doesn't exist), create one
+    se = G.session[session['token']]
     try:
-        session["file_name"]
-        f = open(session["file_name"], "w")
+        se["file_name"]
+        f = open(se["file_name"], "w")
         for t in text:
             f.write(t)
         f.flush()
     except Exception as e:
         with tempfile.NamedTemporaryFile(delete=False) as temp:
-            session["file_name"] = temp.name
+            se["file_name"] = temp.name
             for t in text:
                 temp.write(t.encode("utf-8"))
             temp.flush()
@@ -69,7 +73,7 @@ def evaluate_pylint(text):
     try:
         ARGS = " -r n --disable=R,C"
         (pylint_stdout, pylint_stderr) = lint.py_run(
-            session["file_name"] + ARGS, return_std=True)
+            se["file_name"] + ARGS, return_std=True)
     except Exception as e:
         raise Exception(e)
 
@@ -207,12 +211,14 @@ class CheckCode(MethodView):
             https://github.com/PyCQA/pylint/blob/master/pylint/lint.py
         """
         # Session to handle multiple users at one time and to get textarea from AJAX call
-        session["code"] = request.form['text']
-        text = session["code"]
+        se = G.session[session['token']]
+
+        se["code"] = request.form['text']
+        text = se["code"]
         output = evaluate_pylint(text)
 
         # MANAGER.astroid_cache.clear()
-        return jsonify(output)
+        return true_response(data=output)
 
 
 # Run python in secure system
@@ -229,14 +235,15 @@ class RunCode(MethodView):
     @auth_required
     def post(self):
         if slow():
-            return jsonify(
-                "Running code too much within a short time period. Please wait a few seconds before clicking \"Run\" each time.")
-        session["time_now"] = datetime.now()
+            return false_response(msg=
+                                  "Running code too much within a short time period. Please wait a few seconds before clicking \"Run\" each time.")
+        se = G.session[session['token']]
+        se["time_now"] = datetime.now()
 
         output = None
-        cmd = 'python ' + session["file_name"]
+        cmd = 'python ' + se["file_name"]
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
                   stderr=STDOUT, close_fds=True)
         output = p.stdout.read()
 
-        return jsonify(output.decode('utf-8'))
+        return true_response(data=output.decode('utf-8'))

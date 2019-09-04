@@ -1,4 +1,3 @@
-SECRET_KEY = 'secret!'
+SECRET_KEY = 'secret_key'
 JWT_SECRET_KEY = 'jwtsecret'
-SQLITE_DATABASE = 'ctp_user'
-SOCKET_IO_KEY = 'socket_key'
+SOCKET_KEY = 'socket_key'
