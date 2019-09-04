@@ -124,7 +124,6 @@ $(document).ready(function () {
         hide()
     })
 
-
     //Actually Run in Python
     $("#run").click(function () {
         $.post('/run_code', {
@@ -137,7 +136,5 @@ $(document).ready(function () {
         function print_result(data) {
             show(data)
         };
-
-
     });
 });

@@ -9,14 +9,16 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    token: ''
+    token: '',
+    flag: true,
+    clearTimer: true
   },
   mutations: {
-    setToken: function(state, userToken) {
-      state.token = userToken
+    closeFlag: function(state, close) {
+      state.flag = close
     },
-    clearToken: function(state) {
-      state.token = null
+    clear: function(state, close) {
+      state.clearTimer = close
     }
   },
   modules: {

@@ -8,26 +8,13 @@
 
 <script>
 import { Socket } from 'dgram';
-import { setInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers';
 export default {
   name: "Dashboard",
   data() {
     return {
       value: new Date()
     };
-  },
-  methods:{
-    heart(){
-      console.log(666)
-      let token =sessionStorage.getItem('token')
-      this.$socket.emit('heartbeat', token)
-    }
-  },
-  mounted () {
-    var timer=setInterval(()=>{
-      clearInterval(timer)
-      this.heart()
-    },3000)
   },
   created(){
     const token=sessionStorage.getItem('token')

@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: 'ctpbee_client',
 
   /**
    * @type {boolean} true | false
