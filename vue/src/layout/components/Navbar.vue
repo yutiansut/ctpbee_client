@@ -8,23 +8,18 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">·
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
-          <span> admin</span>
-          <i class="el-icon-caret-bottom" />
+          <img src="@/assets/img/Admin.png" alt="" srcset="" width="20px" style="vertical-align:middle">
+          <span>admin</span>
+          <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              首页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+          <el-dropdown-item >
+            <span style="display:block;" @click="logout">退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -36,8 +31,14 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { setTimeout } from 'timers';
 
 export default {
+  data(){
+    return {
+      count:0
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger
@@ -52,10 +53,40 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
+    logout() {
       sessionStorage.removeItem('token')
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$store.dispatch('user/logout')
+      this.$store.commit('clear',false)
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push({path:'/login'})
+    },
+    heart(){
+      console.log('心跳检测开始')
+      let token =sessionStorage.getItem('token')
+      this.$socket.emit('heartbeat', token)
+    }
+  },
+  sockets:{
+    heartbeat: function(res){
+      if(res==='fail'){
+        this.count++;
+        if(this.count>2){
+          this.tip("error","登录信息已过期，请重新登录！",this)
+          this.logout()
+        }
+      }
+    }
+  },
+  mounted(){
+     if(this.$store.state.flag){
+      var timer=setInterval(()=>{
+        if(this.$store.state.clearTimer){
+          this.heart()
+        }else{
+          return
+        }
+      },3000)
+      this.$store.commit('closeFlag',false)
     }
   }
 }
@@ -115,6 +146,7 @@ export default {
 
     .avatar-container {
       margin-right: 30px;
+      cursor: pointer;
 
       .avatar-wrapper {
         margin-top: 5px;

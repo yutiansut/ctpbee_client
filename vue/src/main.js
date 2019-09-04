@@ -36,6 +36,8 @@ Vue.prototype.$qs = qs
 
 const URL = 'http://10.40.25.15:5000'
 // const URL = 'http://10.200.42.176:5000'
+// const URL = 'http://120.79.8.150:5000'
+
 Vue.prototype.URL = URL
 
 Vue.use(ElementUI, {})

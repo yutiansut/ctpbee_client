@@ -20,7 +20,7 @@ export default {
       console.log('connect......')
     },
     account: function(res){
-      console.log(res)
+      // console.log(res)
       let returnData=res.data
       this.tableData=returnData
     }
@@ -34,6 +34,7 @@ export default {
   padding:20px;
   h4{
     color: #666;
+    font-weight: normal;
   }
 }
 </style>
