@@ -124,9 +124,11 @@ export default {
         .then(res => {
           let returnData = res.data;
           if (returnData.success === true) {
+
             sessionStorage.setItem('token',returnData.data)
             this.tip("success",returnData.msg,this)
             setTimeout(()=>{
+              this.$store.commit('clear',true)
               this.$router.push({ path: "/" });
             },1000)
           }else{
@@ -156,7 +158,7 @@ export default {
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
-$width: 350px;
+$width: 400px;
 .box {
   width: 100%;
   height: 100%;
@@ -171,7 +173,7 @@ $width: 350px;
 }
 </style>
 <style lang="scss">
-$width: 350px;
+$width: 400px;
 .login {
   .el-tabs__item {
     width: $width/2;

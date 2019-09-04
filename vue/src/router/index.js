@@ -82,7 +82,19 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/editor',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        name: 'editor',
+        component: () => import('@/views/editor/index'),
+        meta: { title: '编辑器', icon: '策略' }
+      }
+    ]
+  },
   {
     path: '/strategy',
     component: Layout,

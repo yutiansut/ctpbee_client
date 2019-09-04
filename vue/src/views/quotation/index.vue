@@ -14,7 +14,7 @@
       <el-table-column prop="last_price" label="行情"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" @click="order(scope.row.symbol)">
+          <el-button type="primary" size="medium" @click="order(scope.row.symbol)">
             前往下单
             <i class="el-icon-upload el-icon--right"></i>
           </el-button>
@@ -30,7 +30,7 @@ export default {
     return {
       quotationUrl: this.URL + "/market",
       tableData: [],
-      options: ["ag1901", "ad5244", "fdf5545"],
+      options: [],
       value: "",
       symbol:"",
       symbolObj:{},
@@ -116,6 +116,7 @@ export default {
   padding: 20px;
   h4 {
     color: #666;
+    font-weight: normal;
   }
 }
 </style>
