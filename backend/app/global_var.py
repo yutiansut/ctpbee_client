@@ -49,14 +49,11 @@ class GVar:
     @session.setter
     def session(self, temp):
         """
-        'session':{
-                token :
-                    {
-                         ...
-                          ...
-                              }
+        'session' : {
+                token :{ },
                 }
-        :param temp: {'token':token,'data':{_:_}}
+        :param temp: {  'token':token,
+                        'data':{_:_},   }
         :return:
         """
         token = temp['token']
