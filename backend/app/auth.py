@@ -1,14 +1,13 @@
 import datetime
-import json
 from functools import wraps
 import time
 import jwt
-from flask import current_app, request
+from flask import request, session
 
 from app.setting import JWT_SECRET_KEY
 from app.ext import log
+from app.global_var import G
 from app.default_settings import true_return, false_return, false_response, true_response
-from app.model import session, User
 
 
 class Auth:
@@ -64,27 +63,23 @@ class Auth:
             return '无效Token'
 
     @staticmethod
-    def authenticate(userid):
+    def authenticate(user):
         """
         用户登录，登录成功返回token，写将登录时间写入数据库；登录失败返回失败原因
         :param username
         :return:
         """
-        user = session.query(User).filter_by(userid=userid).first()
-        if user is None:
-            return false_return(msg='找不到用户')
-        else:
-            login_time = int(time.time())
-            user.login_time = login_time
-            session.commit()
+        user = dict(user)
+        login_time = int(time.time())
+        user_info = {
+            "login_time": login_time,
+            "userid": user.get('userid')
+        }
+        user.update(user_info)
+        G.current_user = user  # current_user
 
-            user_info = {
-                "login_time": login_time,
-                "userid": user.userid
-            }
-            current_app.config['CURRENT_USER'] = user_info
-            token = Auth.encode_auth_token(user_info)
-            return true_response(data=token.decode(), msg='登录成功')
+        token = Auth.encode_auth_token(user_info)
+        return true_response(data=token.decode(), msg='登录成功')
 
     @staticmethod
     def identify(request):
@@ -103,11 +98,13 @@ class Auth:
                 if isinstance(payload, str):
                     result = false_return(msg=payload)
                 else:
-                    user = current_app.config.get('CURRENT_USER')
-                    if user is None or user and user['userid'] != payload['data']['userid']:
+                    user = G.current_user
+                    if not user or user and user['userid'] != payload['data']['userid']:
                         result = false_return(msg='找不到该用户信息')
                     else:
                         if user['login_time'] == payload['data']['login_time']:
+                            session['token'] = auth_token
+                            G.session = dict(token=auth_token, data=payload['data'])
                             result = true_return(data=user, msg='请求成功')
                         else:
                             result = false_return(msg='Token已过期')
@@ -141,8 +138,8 @@ def heartbeat(auth_token):
     if isinstance(payload, str):
         result = false_return(msg=payload)
     else:
-        user = current_app.config.get('CURRENT_USER')
-        if user is None or user and user['userid'] != payload['data']['userid']:
+        user = G.current_user
+        if not user or user and user['userid'] != payload['data']['userid']:
             log.warn('心跳检测：找不到该用户信息')
             result = false_return(msg='心跳检测：找不到该用户信息')
         else:

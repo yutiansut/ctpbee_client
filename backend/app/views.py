@@ -1,17 +1,14 @@
-import functools
 from datetime import datetime
 from threading import Thread
 from time import sleep
-from flask_socketio import disconnect
-from flask import session, current_app
-from flask import request, render_template
+from flask import request, session
 from flask.views import MethodView
 
-from ctpbee import CtpBee, current_app as bee_current_app
+from ctpbee import CtpBee, current_app as bee_current_app, del_app
 from ctpbee import helper
 from .default_settings import DefaultSettings, true_response, false_response
 from .ext import io
-from app.model import User
+from app.global_var import G
 from app.auth import Auth, auth_required, heartbeat
 from time import time
 
@@ -19,10 +16,10 @@ is_send = True
 
 
 @io.on('my_connect')
-def connect_handle(json):
-    print('connect: ', json)
-    if json == current_app.config['SOCKET_IO_KEY']:
-        current_app.config['SOCKET_IO'] = int(time())
+def connect_handle(key):
+    print('connect(key): ', key)
+    if key == G.socket_key:
+        G.socket_connect = int(time())
         io.emit('customEmit', 'ok')
     else:
         return False
@@ -32,60 +29,67 @@ def connect_handle(json):
 def heartbeat_handle(token):
     result = heartbeat(token)
     if result['success']:
-        current_app.config['SOCKET_HEARTBEAT'] = True
+        io.emit('heartbeat', "success")
     else:
-        current_app.config['SOCKET_HEARTBEAT'] = False
+        io.emit('heartbeat', "fail")
 
 
 def socket_connect():
     """
-    socket 连接
+    socket 连接成功后才登录
     :return:
     """
-    if int(time()) - current_app.config.get('SOCKET_IO', 0) < 90:
+    if int(time()) - G.socket_connect < 90:
         return True
     return False
 
 
+class BeeQuery(Thread):
+    def __init__(self, bee_app):
+        super().__init__()
+        self.bee_app = bee_app
+        self._running = True
+
+    def stop(self):
+        self._running = False
+
+    def run(self):
+        while self._running:
+            # print('run...',currentThread().ident)
+            self.bee_app.query_position()
+            sleep(1)
+            self.bee_app.query_account()
+            sleep(1)
+
+
 class LoginView(MethodView):
     def post(self):
+        info = request.values
         if not socket_connect():
             return false_response(msg="停留太久,刷新试试")
-
-        from ctpbee import current_app as bee_current_app
-        if bee_current_app != None:
-            userid = bee_current_app.config["CONNECT_INFO"]['userid']
-            token = Auth.authenticate(userid=userid)
-            return token
-
-        info = request.values
-        print(info)
-        app = CtpBee(name=info.get("username"), import_name=__name__)
+        del_app(__name__)
+        bee_app = CtpBee(name=info.get("username"), import_name=__name__)
         login_info = {
             "CONNECT_INFO": info,
             "INTERFACE": "ctp",
             "TD_FUNC": True,
             "MD_FUNC": True,
         }
-        app.config.from_mapping(login_info)
-        default = DefaultSettings("default_settings", app, io)
-        app.start()
+        bee_app.config.from_mapping(login_info)
+        default = DefaultSettings("default_settings", bee_app, io)
+        bee_app.start()
         sleep(1)
-        if not app.td_login_status:
+        if not bee_app.td_login_status:
             return false_response(msg="登录出现错误")
 
-        User.add(info)  # 写入数据库，无密码
-
-        def run(app: CtpBee):
-            while True:
-                app.query_position()
-                sleep(1)
-                app.query_account()
-                sleep(1)
-
-        p = Thread(target=run, args=(app,))
+        G.bee_app = bee_app  # 覆盖
+        if G.bee_query:
+            G.bee_query.stop()  # 停止线程
+        p = BeeQuery(bee_app=G.bee_app)
         p.start()
-        token = Auth.authenticate(userid=info.get('userid'))
+        G.bee_query = p  # 线程加入
+
+        token = Auth.authenticate(user=info)
         return token
 
 
@@ -150,12 +154,29 @@ class OpenOrderView(MethodView):
             bee_current_app.cancel_order(req)
             return true_response(msg="成功撤单")
         except Exception:
-            return false_response(mgs="撤单失败")
+            return false_response(msg="撤单失败")
 
 
 class WriteStrategy(MethodView):
-
+    @auth_required
     def get(self):
-        session["count"] = 0
-        session["time_now"] = datetime.now()
-        return render_template("write_strategy.html")
+        G.session = dict(token=session['token'], data=dict(count=0, time_now=datetime.now()))
+        result = []
+        for k, v in bee_current_app.extensions.items():
+            temp = {}
+            temp['name'] = k
+            temp['status'] = "停止" if v.frozen else "运行中"
+            result.append(temp)
+        return true_response(data=[{'name': 'exmp1', 'status': "运行中"}, {'name': 'exmp2', 'status': "停止"}])
+
+    @auth_required
+    def post(self):
+        operation = request.values.get('operation')
+        name = request.values.get('name')
+        if name in bee_current_app.extensions:
+            if operation == "开启":
+                bee_current_app.enable_extension(name)
+            if operation == "停止":
+                bee_current_app.suspend_extension(name)
+            return true_response(msg=f'{operation}成功')
+        return false_response(msg=f"{name} not found！")
