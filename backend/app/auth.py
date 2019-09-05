@@ -78,8 +78,9 @@ class Auth:
         user.update(user_info)
         G.current_user = user  # current_user
 
-        token = Auth.encode_auth_token(user_info)
-        return true_response(data=token.decode(), msg='登录成功')
+        token = Auth.encode_auth_token(user_info).decode()
+        G.session = dict(token=token, data=user_info)
+        return true_response(data=token, msg='登录成功')
 
     @staticmethod
     def identify(request):
@@ -100,16 +101,18 @@ class Auth:
                 else:
                     user = G.current_user
                     if not user or user and user['userid'] != payload['data']['userid']:
-                        result = false_return(msg='找不到该用户信息')
+                        log.error('找不到该用户信息')
+                        result = false_return(msg='token error')
                     else:
                         if user['login_time'] == payload['data']['login_time']:
-                            session['token'] = auth_token
-                            G.session = dict(token=auth_token, data=payload['data'])
+                            session['token'] = auth_token  # Strategy
                             result = true_return(data=user, msg='请求成功')
                         else:
-                            result = false_return(msg='Token已过期')
+                            log.error('Token已过期')
+                            result = false_return(msg='token error')
         else:
-            result = false_return(msg='未提供token')
+            log.error('未提供token')
+            result = false_return(msg='token error')
         return result
 
 
@@ -121,13 +124,12 @@ def auth_required(view_func):
     """
 
     @wraps(view_func)
-    def wrapper(self):
+    def wrapper(self, *args, **kwargs):
         result = Auth.identify(request)
         if result['success'] and result['data']:
             log.success("Token验证成功")
-            return view_func(self)
+            return view_func(self, *args, **kwargs)
         else:
-            log.error("Token验证失败: " + result['msg'])
             return false_response(msg=result['msg'])
 
     return wrapper
@@ -141,12 +143,12 @@ def heartbeat(auth_token):
         user = G.current_user
         if not user or user and user['userid'] != payload['data']['userid']:
             log.warn('心跳检测：找不到该用户信息')
-            result = false_return(msg='心跳检测：找不到该用户信息')
+            result = false_return()
         else:
             if user['login_time'] == payload['data']['login_time']:
                 log.success('心跳检测：请求成功')
-                result = true_return(msg='心跳检测：请求成功')
+                result = true_return()
             else:
                 log.warn('心跳检测：Token已过期')
-                result = false_return(msg='心跳检测：Token已过期')
+                result = false_return()
     return result

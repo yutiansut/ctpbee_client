@@ -3,14 +3,14 @@ from threading import Thread
 from time import sleep
 from flask import request, session
 from flask.views import MethodView
-
 from ctpbee import CtpBee, current_app as bee_current_app, del_app
 from ctpbee import helper
 from .default_settings import DefaultSettings, true_response, false_response
 from .ext import io
 from app.global_var import G
-from app.auth import Auth, auth_required, heartbeat
+from app.auth import Auth, auth_required
 from time import time
+from app.helper import load_strategy, delete_strategy
 
 is_send = True
 
@@ -20,18 +20,9 @@ def connect_handle(key):
     print('connect(key): ', key)
     if key == G.socket_key:
         G.socket_connect = int(time())
-        io.emit('customEmit', 'ok')
+        io.emit('customEmit', "ok")
     else:
         return False
-
-
-@io.on('heartbeat')
-def heartbeat_handle(token):
-    result = heartbeat(token)
-    if result['success']:
-        io.emit('heartbeat', "success")
-    else:
-        io.emit('heartbeat', "fail")
 
 
 def socket_connect():
@@ -42,6 +33,17 @@ def socket_connect():
     if int(time()) - G.socket_connect < 90:
         return True
     return False
+
+
+class AuthCode(MethodView):
+    @auth_required
+    def put(self):
+        password = request.values.get('password')
+        code = request.values.get('authorization', "")
+        if password == bee_current_app.trader.password and len(code) >= 6:
+            G.authorization = code
+            return true_response(msg='修改成功')
+        return false_response(msg='修改失败')
 
 
 class BeeQuery(Thread):
@@ -64,33 +66,53 @@ class BeeQuery(Thread):
 
 class LoginView(MethodView):
     def post(self):
-        info = request.values
         if not socket_connect():
-            return false_response(msg="停留太久,刷新试试")
+            return false_response(msg='停留太久,刷新试试')
+        info = dict(request.values)
+        authorization = info.pop('authorization', None)
+        if not authorization or not G.check_authorization(authorization):
+            return false_response(msg='authorization error')
+
+        userid = info.get('userid')
+        password = info.get('password')
+        from ctpbee import current_app as bee_current_app
+        if bee_current_app:
+            if userid == bee_current_app.trader.userid and password == bee_current_app.trader.password:
+                return Auth.authenticate(info)
+            else:
+                return false_response(msg='账户或密码错误')
+        else:
+            bee_app = CtpBee(name=info.get("username"), import_name=__name__)
+            login_info = {
+                "CONNECT_INFO": info,
+                "INTERFACE": "ctp",
+                "TD_FUNC": True,
+                "MD_FUNC": True,
+            }
+            bee_app.config.from_mapping(login_info)
+            default = DefaultSettings("default_settings", bee_app, io)
+            load_strategy(bee_app)  # 加载策略
+            bee_app.start()
+            sleep(1)
+            if not bee_app.td_login_status:
+                return false_response(msg="登录出现错误")
+
+            if G.bee_query:
+                G.bee_query.stop()  # 停止线程
+            p = BeeQuery(bee_app=bee_app)
+            p.start()
+            G.bee_query = p  # 线程加入
+
+            token = Auth.authenticate(info)
+            return token
+
+
+class Logout(MethodView):
+    @auth_required
+    def get(self):
         del_app(__name__)
-        bee_app = CtpBee(name=info.get("username"), import_name=__name__)
-        login_info = {
-            "CONNECT_INFO": info,
-            "INTERFACE": "ctp",
-            "TD_FUNC": True,
-            "MD_FUNC": True,
-        }
-        bee_app.config.from_mapping(login_info)
-        default = DefaultSettings("default_settings", bee_app, io)
-        bee_app.start()
-        sleep(1)
-        if not bee_app.td_login_status:
-            return false_response(msg="登录出现错误")
-
-        G.bee_app = bee_app  # 覆盖
-        if G.bee_query:
-            G.bee_query.stop()  # 停止线程
-        p = BeeQuery(bee_app=G.bee_app)
-        p.start()
-        G.bee_query = p  # 线程加入
-
-        token = Auth.authenticate(user=info)
-        return token
+        G.current_user = None
+        return true_response(msg='清除登录信息成功')
 
 
 class MarketView(MethodView):
@@ -157,7 +179,7 @@ class OpenOrderView(MethodView):
             return false_response(msg="撤单失败")
 
 
-class WriteStrategy(MethodView):
+class Strategy(MethodView):
     @auth_required
     def get(self):
         G.session = dict(token=session['token'], data=dict(count=0, time_now=datetime.now()))
@@ -167,16 +189,26 @@ class WriteStrategy(MethodView):
             temp['name'] = k
             temp['status'] = "停止" if v.frozen else "运行中"
             result.append(temp)
-        return true_response(data=[{'name': 'exmp1', 'status': "运行中"}, {'name': 'exmp2', 'status': "停止"}])
+        return true_response(data=result)
 
     @auth_required
-    def post(self):
+    def put(self):
         operation = request.values.get('operation')
         name = request.values.get('name')
         if name in bee_current_app.extensions:
             if operation == "开启":
-                bee_current_app.enable_extension(name)
-            if operation == "停止":
-                bee_current_app.suspend_extension(name)
-            return true_response(msg=f'{operation}成功')
+                res = bee_current_app.enable_extension(name)
+            elif operation == "关闭":
+                res = bee_current_app.suspend_extension(name)
+            else:
+                res = 'unknown'
+            res = '成功' if res is True else '失败'
+            return true_response(msg=f'{operation} {name} {res}')
         return false_response(msg=f"{name} not found！")
+
+    @auth_required
+    def delete(self):
+        name = request.values.get('name')
+        if delete_strategy(name):
+            return true_response(msg=f'删除{name}成功')
+        return false_response(msg=f'删除{name}失败')

@@ -18,6 +18,7 @@ from flask.views import MethodView
 from app.auth import auth_required
 from app.global_var import G
 from app.default_settings import true_response, false_response
+from app.helper import add_strategy, get_strategy
 
 is_linux = True
 
@@ -29,15 +30,6 @@ num_cores = cpu_count()
 
 
 # Slow down if user clicks "Run" too many times
-def slow():
-    se = G.session[session['token']]
-    se["count"] += 1
-    time = datetime.now() - se["time_now"]
-    if float(se["count"]) / float(time.total_seconds()) > 5:
-        return True
-    return False
-
-
 def evaluate_pylint(text):
     """Create temp files for pylint parsing on user code
 
@@ -188,7 +180,7 @@ def format_errors(pylint_text):
     # for error in errors_list:
     #     pylint_dict[count]=process_error(error)
     #     count +=1
-    return pylint_dict
+    # return pylint_dict
 
 
 class CheckCode(MethodView):
@@ -216,13 +208,21 @@ class CheckCode(MethodView):
         se["code"] = request.form['text']
         text = se["code"]
         output = evaluate_pylint(text)
-
+        print(output)
         # MANAGER.astroid_cache.clear()
         return true_response(data=output)
 
 
-# Run python in secure system
+def slow():
+    se = G.session[session['token']]
+    se["count"] += 1
+    time = datetime.now() - se["time_now"]
+    if float(se["count"]) / float(time.total_seconds()) > 5:
+        return True
+    return False
 
+
+# Run python in secure system
 class RunCode(MethodView):
     """Run python 3 code
         :return: JSON object of python 3 output
@@ -236,10 +236,24 @@ class RunCode(MethodView):
     def post(self):
         if slow():
             return false_response(msg=
-                                  "Running code too much within a short time period. Please wait a few seconds before clicking \"Run\" each time.")
+                                  "Running code too much within a short time period. "
+                                  "Please wait a few seconds Run .")
         se = G.session[session['token']]
         se["time_now"] = datetime.now()
-
+        se["code"] = request.form['text']
+        text = se['code']
+        try:
+            se["file_name"]
+            f = open(se["file_name"], "w")
+            for t in text:
+                f.write(t)
+            f.flush()
+        except Exception as e:
+            with tempfile.NamedTemporaryFile(delete=False) as temp:
+                se["file_name"] = temp.name
+                for t in text:
+                    temp.write(t.encode("utf-8"))
+                temp.flush()
         output = None
         cmd = 'python ' + se["file_name"]
         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
@@ -247,3 +261,33 @@ class RunCode(MethodView):
         output = p.stdout.read()
 
         return true_response(data=output.decode('utf-8'))
+
+
+class CodeManage(MethodView):
+    @auth_required
+    def get(self):
+        name = request.values.get('name')
+        if name and name != 'default_settings':
+            text = get_strategy(name)
+            if text:
+                return true_response(data=text)
+            else:
+                return false_response(msg='unknown name')
+        return false_response(msg='name is none')
+
+    @auth_required
+    def post(self):
+        pattern = r"ext\s*=\s*\w*[(][\"\'](.*)[\"\'][)]"
+        print(G.session)
+        se = G.session[session['token']]
+
+        text = request.values.get('text')
+        name = re.findall(pattern, text)  # 检测 name ,ext
+        if not name or not text:
+            return false_response(msg='name,text为空 or 未定义ext变量 ')
+        name = name[-1]
+        res = add_strategy(name, text)
+        if res is True:
+            return true_response(msg='添加成功')
+        else:
+            return false_response(msg='添加失败:' + res)
