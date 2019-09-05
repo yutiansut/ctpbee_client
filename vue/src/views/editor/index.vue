@@ -1,19 +1,15 @@
 <template>
   <div class="quotation">
-    <div class="in-coder-panel">
+    <div class="in-coder-panel" ref="editor" :style="{height:editorHeight}">
       <textarea ref="textarea"></textarea>
-      <!-- <el-select class="code-mode-select" v-model="mode" @change="changeMode">
-        <el-option v-for="mode in modes" :key="mode.value" :label="mode.label" :value="mode.value"></el-option>
-      </el-select> -->
     </div>
-    <el-button type="success" size="medium" @click="send(code)">RUN1</el-button>
-    <el-button type="success" size="medium" @click="check_code(code)">RUN2</el-button>
+    <el-button type="success" size="medium" @click="run(code)">运行</el-button>
+    <el-button type="primary" size="medium" @click="updateOrAdd(code)">更新或添加</el-button>
     <el-drawer
       title="控制台"
       :visible.sync="drawer"
       :direction="direction"
       :before-close="handleClose"
-      style="overflow:auto"
     >
       <span>
         <pre class="retrunMsg">{{returnData}}</pre>
@@ -25,37 +21,40 @@
 <script type="text/ecmascript-6">
 // 引入全局实例
 import _CodeMirror from "codemirror";
-
+// 尝试获取全局实例
+const CodeMirror = window.CodeMirror || _CodeMirror;
+// 核心样式
+import "codemirror/lib/codemirror.css";
+import "codemirror/lib/codemirror.js";
 //代码折叠
 import "codemirror/addon/fold/foldgutter.css";
 import "codemirror/addon/fold/foldcode.js";
 import "codemirror/addon/fold/foldgutter.js";
 import "codemirror/addon/fold/brace-fold.js";
 import "codemirror/addon/fold/comment-fold.js";
+import "codemirror/addon/fold/indent-fold.js";
 //括号匹配
 import "codemirror/addon/edit/matchbrackets.js";
+import "codemirror/addon/edit/closebrackets.js";
 //自动补全
 import "codemirror/addon/hint/show-hint.css";
 import "codemirror/addon/hint/show-hint.js";
 import "codemirror/addon/hint/anyword-hint.js";
 
 import "codemirror/addon/lint/lint.css";
-// 核心样式
-import "codemirror/lib/codemirror.css";
-import "codemirror/lib/codemirror.js";
+import "codemirror/addon/lint/lint.js";
+
 // 引入主题后还需要在 options 中指定主题才会生效
 // import "codemirror/theme/cobalt.css";
 import "codemirror/theme/ambiance.css";
 // import "codemirror/theme/Monokai.css";
-import "codemirror/addon/hint/show-hint";
 // import "codemirror/addon/hint/Python-hint";
 import "codemirror/addon/selection/active-line";
-import "codemirror/addon/edit/matchbrackets";
-import "codemirror/addon/selection/active-line";
-import "codemirror/addon/hint/show-hint.css";
 
-import "codemirror/addon/lint/lint.js";
-
+import "codemirror/addon/comment/comment.js";
+import "codemirror/keymap/sublime.js";
+// import "@/assets/js/pylint_js/javascript.js";
+// import "@/assets/js/pylint_js/cm-validator-remote.js";
 // 需要引入具体的语法高亮库才会有对应的语法高亮效果
 // codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
 // 但 vue 貌似没有无法在实例初始化后再动态加载对应 JS ，所以此处才把对应的 JS 提前引入
@@ -70,10 +69,6 @@ import "codemirror/mode/shell/shell.js";
 import "codemirror/mode/sql/sql.js";
 import "codemirror/mode/swift/swift.js";
 import "codemirror/mode/vue/vue.js";
-// import "@/assets/js/checkCode.js";
-
-// 尝试获取全局实例
-const CodeMirror = window.CodeMirror || _CodeMirror;
 
 export default {
   name: "in-coder",
@@ -88,28 +83,66 @@ export default {
   },
   data() {
     return {
-      checkUrl: this.URL + "/check_code",
+      updateUrl: this.URL + "/code",
       sendUrl: this.URL + "/run_code",
+      editorHeight:"",
+      token:"",
       returnData: "",
       drawer: false,
       direction: "btt",
       // 内部真实的内容
-      code: `class Foo:
-    def __init__(self):
-        self.cn = "大锅大嫂过年好～"
-        self.en = 'Happy New Year to Big Brother and Big Sister-in-law~'
+      code: `from datetime import datetime
 
-    def makeSense(self):
-        print(self.cn)
-        print(self.en)
+from ctpbee import CtpbeeApi
+from ctpbee.constant import LogData, AccountData, PositionData
 
-x = Foo()
-x.makeSense()
 
-#test error and warn
-def foo(bar, baz):
-    pass
-foo(42)
+class StrategyClass(CtpbeeApi):
+    def __init__(self, name, app=None):
+        super().__init__(name, app)
+        self.instrument_set = {"ag1910.SHFE"}
+        self.init_flag = False
+        self.converter = None
+
+    def on_trade(self, trade):
+        pass
+
+    def on_realtime(self, timed: datetime):
+        pass
+
+    def on_contract(self, contract):
+        # 订阅所有
+        if contract.local_symbol in self.instrument_set:
+            self.app.subscribe(contract.symbol)
+
+    def on_order(self, order):
+        pass
+
+    def on_position(self, position: PositionData) -> None:
+        pass
+
+    def on_account(self, account: AccountData) -> None:
+        """ """
+        # print(self.converter.account_df)
+
+    def on_init(self, init):
+        self.init_flag = True
+
+        print("初始化完成")
+
+    def on_tick(self, tick):
+        """tick process function"""
+
+    def on_bar(self, bar):
+        """bar process function"""
+
+    def on_log(self, log: LogData):
+        """ 可以用于将log信息推送到外部 """
+        pass
+
+
+ext = StrategyClass('strategy_name')
+
 
 `,
       // 默认的语法类型
@@ -129,21 +162,34 @@ foo(42)
         // 显示行号
         lineNumbers: true,
         line: true,
-        //括号匹配
-        matchBrackets: true,
+        //快捷键风格
+        keyMap: "sublime",
+        // 智能缩进
+        smartIndent: true,
+        // 使用制表符进行智能缩进
+        indentWithTabs: true,
         // spellcheck:true,
         lineWrapping: true,
+        // 启用行槽中的代码折叠
         foldGutter: true,
-        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-        // gutters: ["CodeMirror-lint-markers"],
+        // 自动聚焦
+        autofocus: true,
+        // 匹配结束符号，比如"]、}"
+        matchBrackets: true,
+        // 自动闭合符号
+        autoCloseBrackets: true,
+        // 显示选中行的样式
+        styleActiveLine: true,
+        //语法检测开启
+        lint: true,
+        // 在行槽中添加行号显示器、折叠器、语法检测器
+        gutters: [
+          "CodeMirror-linenumbers",
+          "CodeMirror-foldgutter",
+          "CodeMirror-lint-markers"
+        ],
         // 智能提示
-        extraKeys: { "Ctrl-Space": "autocomplete" },
-
-        lintWith: {
-          getAnnotations: CodeMirror.remoteValidator,
-          async: true,
-          check_cb: this.check_syntax
-        }
+        extraKeys: { Ctrl: "autocomplete" }
       },
       // 支持切换的语法高亮类型，对应 JS 已经提前引入
       // 使用的是 MIME-TYPE ，不过作为前缀的 text/ 在后面指定时写死了
@@ -152,51 +198,6 @@ foo(42)
           value: "x-python",
           label: "Python"
         }
-        // {
-        //   value: "css",
-        //   label: "CSS"
-        // },
-        // {
-        //   value: "javascript",
-        //   label: "Javascript"
-        // },
-        // {
-        //   value: "html",
-        //   label: "XML/HTML"
-        // },
-        // {
-        //   value: "x-java",
-        //   label: "Java"
-        // },
-        // {
-        //   value: "x-objectivec",
-        //   label: "Objective-C"
-        // },
-
-        // {
-        //   value: "x-rsrc",
-        //   label: "R"
-        // },
-        // {
-        //   value: "x-sh",
-        //   label: "Shell"
-        // },
-        // {
-        //   value: "x-sql",
-        //   label: "SQL"
-        // },
-        // {
-        //   value: "x-swift",
-        //   label: "Swift"
-        // },
-        // {
-        //   value: "x-vue",
-        //   label: "Vue"
-        // },
-        // {
-        //   value: "markdown",
-        //   label: "Markdown"
-        // }
       ]
     };
   },
@@ -204,6 +205,10 @@ foo(42)
     // 初始化
     this._initialize();
     this.changeMode("x-python");
+    this.token = sessionStorage.getItem("token");
+    this.strategyName = this.$route.query.name;
+    this.getCode(this.strategyName);
+    this.setEditorHeight()
   },
   methods: {
     // 初始化
@@ -212,16 +217,6 @@ foo(42)
       this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.options);
       // 编辑器赋值
       this.coder.setValue(this.value || this.code);
-
-      // this.coder.extraKeys={Ctrl: 'autocomplete'};//自定义快捷键
-      // this.coder.hintOptions= {//自定义提示选项
-      //   tables: {
-      //     users: ['name', 'score', 'birthDate']
-      //   }
-      // }
-      // this.coder.on("cursorActivity", () =>{
-      //   this.coder.showHint();
-      // });
       // 支持双向绑定
       this.coder.on("change", coder => {
         this.code = coder.getValue();
@@ -267,124 +262,30 @@ foo(42)
       // 允许父容器通过以下函数监听当前的语法值
       this.$emit("language-change", label);
     },
-    check_syntax(code, result_cb) {
-      console.log(code);
-      //Example error for guideline
-      var error_list = [
-        {
-          line_no: null,
-          column_no_start: null,
-          column_no_stop: null,
-          fragment: null,
-          message: null,
-          severity: null
-        }
-      ];
-
-      //Push and replace errors
-      function check(data) {
-        //Clear array.
-        error_list = [
-          {
-            line_no: null,
-            column_no_start: null,
-            column_no_stop: null,
-            fragment: null,
-            message: null,
-            severity: null
-          }
-        ]; //Check if pylint output is empty.
-        if (data == null) {
-          result_cb(error_list);
-        } else {
-          var data_length = 0;
-          if (data != null) {
-            data_length = Object.keys(data).length;
-          }
-          for (var x = 0; x < data_length; x += 1) {
-            if (data[x] == null) {
-              continue;
-            }
-            number = data[x].line;
-            code = data[x].code;
-            codeinfo = data[x].error_info;
-            severity = code[0];
-            moreinfo = data[x].message;
-            message = data[x].error;
-
-            //Set severity to necessary parameters
-            if (severity == "E" || severity == "e") {
-              severity = "error";
-              severity_color = "red";
-            } else if (severity == "W" || severity == "w") {
-              severity = "warning";
-              severity_color = "yellow";
-            }
-            //Push to error list
-            error_list.push({
-              line_no: number,
-              column_no_start: null,
-              column_no_stop: null,
-              fragment: null,
-              message: message,
-              severity: severity
-            });
-          }
-          result_cb(error_list);
-        }
-      }
-
-      //AJAX call to pylint
-      // $.post(
-      //   "/check_code",
-      //   {
-      //     text: code
-      //   },
-      //   function(data) {
-      //     current_text = data;
-      //     check(current_text);
-      //     return false;
-      //   },
-      //   "json"
-      // );
-
+    updateOrAdd(code) {
       this.$axios
-        .post(this.url, this.$qs.stringify({ text: code }))
-        .then(data => {
-          current_text = data;
-          check(current_text);
-          return false;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    check_code(code) {
-      let token = sessionStorage.getItem("token");
-      this.$axios
-        .post(this.checkUrl, this.$qs.stringify({ text: code }), {
+        .post(this.updateUrl, this.$qs.stringify({ text: code}), {
           headers: {
-            Authorization: "JWT " + token
+            Authorization: "JWT " + this.token
           }
         })
         .then(res => {
-          console.log(res);
+          let returnData=res.data
+          this.tip(returnData.success,returnData.msg,this)
         })
         .catch(err => {
           console.log(err);
         });
     },
-    send(code) {
-      console.log(code);
-      let token = sessionStorage.getItem("token");
+    run(code) {
       this.$axios
         .post(this.sendUrl, this.$qs.stringify({ text: code }), {
           headers: {
-            Authorization: "JWT " + token
+            Authorization: "JWT " + this.token
           }
         })
         .then(res => {
-          console.log(res);
+
           this.returnData = res.data.data;
           this.drawer = true;
         })
@@ -392,28 +293,62 @@ foo(42)
           console.log(err);
         });
     },
+    getCode(name) {
+      this.$axios
+        .get(
+          this.updateUrl,
+          {
+            headers: {
+              Authorization: "JWT " + this.token
+            },
+            params: {
+              "name": name
+            }
+          }
+        )
+        .then(res => {
+          let returnData=res.data
+          if(returnData.msg==="name is none"){
+            return
+          }else{
+            this.code=returnData.data[name]
+            this.coder.setValue(this.code);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     handleClose(done) {
       done();
+    },
+    setEditorHeight(){
+      let h=window.innerHeight
+      this.editorHeight=h-120+'px'
     }
   }
 };
 </script>
 
 <style lang="scss">
+.in-coder-panel .CodeMirror pre.CodeMirror-line {
+  font-family: "微软雅黑";
+}
 .el-drawer__open .el-drawer.btt {
   overflow: auto;
   height: 50% !important;
   background-color: #333;
-  color:#fff;
-  pre{
+  color: #fff;
+  pre {
     font-family: "微软雅黑";
     line-height: 25px;
     padding: 0 10px;
   }
-  .el-drawer__header{
+  .el-drawer__header {
     margin-bottom: 10px;
   }
 }
+
 .quotation {
   padding: 10px 20px;
 }
@@ -425,7 +360,7 @@ foo(42)
   margin-bottom: 10px;
   .CodeMirror-sizer {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
   }
   .CodeMirror pre.CodeMirror-line,
   .CodeMirror pre.CodeMirror-line-like {
@@ -434,6 +369,8 @@ foo(42)
   .cm-s-ambiance .CodeMirror-linenumber {
     line-height: 28px;
     color: #ccc;
+    font-weight: bold;
+    font-family: "微软雅黑";
   }
   .CodeMirror {
     width: 100%;
@@ -451,6 +388,11 @@ foo(42)
     right: 10px;
     top: 10px;
     max-width: 130px;
+  }
+  .cm-s-ambiance .CodeMirror-guttermarker-subtle {
+    color: #ccc;
+    margin-top: 6px;
+    font-size: 18px;
   }
 }
 </style>

@@ -1,4 +1,4 @@
-CodeMirror.remoteValidator = function (cm, updateLinting, options) {
+codeMirror.remoteValidator = function (cm, updateLinting, options) {
 	//Current value of text
 	var text = cm.getValue();
 

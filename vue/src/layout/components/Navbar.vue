@@ -1,95 +1,104 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">·
+        <div class="avatar-wrapper">
+          ·
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
-          <img src="@/assets/img/Admin.png" alt="" srcset="" width="20px" style="vertical-align:middle">
+          <img src="@/assets/img/Admin.png" alt srcset width="20px" style="vertical-align:middle" />
           <span>admin</span>
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              首页
-            </el-dropdown-item>
+            <el-dropdown-item>首页</el-dropdown-item>
           </router-link>
-          <el-dropdown-item >
-            <span style="display:block;" @click="logout">退出</span>
+          <el-dropdown-item>
+            <span style="display:block;" @click="dialogVisible = true">修改授权码</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span style="display:block;" @click="logout">退出账户</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog title="修改授权码" :visible.sync="dialogVisible" width="30%" @click="dialogVisible = false">
+      <el-form label-position="right" label-width="60px" :model="modifyCode">
+        <el-form-item label="密码">
+          <el-input type="password" v-model="modifyCode.password"></el-input>
+        </el-form-item>
+        <el-form-item label="授权码">
+          <el-input type="password" v-model="modifyCode.authorization"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modify(modifyCode)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
-import { setTimeout } from 'timers';
+import { mapGetters } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import Hamburger from "@/components/Hamburger";
+import { setTimeout } from "timers";
 
 export default {
-  data(){
+  data() {
     return {
-      count:0
-    }
+      modifyUrl: this.URL + "/auth_code",
+      dialogVisible: false,
+      token:'',
+      modifyCode: {
+        password: "",
+        authorization: ""
+      }
+    };
   },
   components: {
     Breadcrumb,
     Hamburger
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar'
-    ])
+    ...mapGetters(["sidebar", "avatar"])
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("app/toggleSideBar");
     },
     logout() {
-      sessionStorage.removeItem('token')
-      this.$store.dispatch('user/logout')
-      this.$store.commit('clear',false)
-      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-      this.$router.push({path:'/login'})
+      sessionStorage.removeItem("token");
+      this.$store.dispatch("user/logout");
+      this.$router.push({ path: "/login" });
     },
-    heart(){
-      console.log('心跳检测开始')
-      let token =sessionStorage.getItem('token')
-      this.$socket.emit('heartbeat', token)
+    modify(data) {
+      this.$axios.put(this.modifyUrl, this.$qs.stringify(data), {
+        headers: {
+          Authorization: "JWT " + this.token
+        }
+      }).then(res=>{
+        let retrunData=res.data
+        this.tip(retrunData.success,retrunData.msg,this)
+        this.dialogVisible = false
+      }).catch(err=>{
+        console.log(err)
+      });
     }
   },
-  sockets:{
-    heartbeat: function(res){
-      if(res==='fail'){
-        this.count++;
-        if(this.count>2){
-          this.tip("error","登录信息已过期，请重新登录！",this)
-          this.logout()
-        }
-      }
-    }
-  },
-  mounted(){
-     if(this.$store.state.flag){
-      var timer=setInterval(()=>{
-        if(this.$store.state.clearTimer){
-          this.heart()
-        }else{
-          return
-        }
-      },3000)
-      this.$store.commit('closeFlag',false)
-    }
+  mounted() {
+    this.token=sessionStorage.getItem('token')
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -98,18 +107,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -136,10 +145,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
@@ -169,5 +178,10 @@ export default {
       }
     }
   }
+}
+</style>
+<style lang="scss">
+.el-dialog__body {
+  padding-bottom: 10px;
 }
 </style>

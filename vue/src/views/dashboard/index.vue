@@ -15,12 +15,6 @@ export default {
     return {
       value: new Date()
     };
-  },
-  created(){
-    const token=sessionStorage.getItem('token')
-    if(!token){
-      this.$router.push({path:'/login'})
-    }
   }
 };
 </script>

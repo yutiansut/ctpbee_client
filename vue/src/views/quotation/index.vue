@@ -71,11 +71,7 @@ export default {
         })
         .then(res => {
           let returnData=res.data
-          if(returnData.success===true){
-            this.tip("success",returnData.msg,this)
-          }else{
-            this.tip("error",returnData.msg,this)
-          }
+          this.tip(returnData.success,returnData.msg,this)
         })
         .catch(err => {
           console.log(err);
@@ -94,11 +90,7 @@ export default {
         })
         .then(res => {
           let returnData=res.data
-          if(returnData.success===true){
-            this.tip("success",returnData.msg,this)
-          }else{
-            this.tip("error",returnData.msg,this)
-          }
+          this.tip(returnData.success,returnData.msg,this)
         })
         .catch(err => {
           console.log(err);
