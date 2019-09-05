@@ -20,9 +20,17 @@ export default {
       console.log('connect......')
     },
     account: function(res){
-      // console.log(res)
+      console.log(res)
       let returnData=res.data
-      this.tableData=returnData
+      if(returnData.success===false){
+        this.$message({
+          showClose: true,
+          message: returnData.msg,
+          type: 'error'
+        });
+      }else{
+        this.tableData=returnData
+      }
     }
   }
 

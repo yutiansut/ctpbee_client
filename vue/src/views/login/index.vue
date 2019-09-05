@@ -10,7 +10,12 @@
               v-model="commonLogin.password"
               placeholder="账号密码/PASSWORD"
               show-password
-              @keyup.enter.native="handleLogin(detailedLogin,'detail')"
+            ></el-input>
+            <el-input
+              type="password"
+              v-model="commonLogin.authorization"
+              placeholder="授权码/AUTHORIZATION_CODE"
+              @keyup.enter.native="handleLogin(detailedLogin,'common')"
             ></el-input>
             <el-select v-model="simnowValue" clearable placeholder="请选择">
               <el-option
@@ -38,7 +43,13 @@
             <el-input type="text" v-model="detailedLogin.appid" placeholder="产品名称/APPID"></el-input>
             <el-input type="text" v-model="detailedLogin.auth_code" placeholder="认证码/AUTH_CODE"></el-input>
             <el-input type="text" v-model="detailedLogin.td_address" placeholder="交易前置/TD_ADDRESS"></el-input>
-            <el-input type="text" v-model="detailedLogin.md_address" placeholder="行情前置/MD_ADDRESS" @keyup.enter.native="handleLogin(detailedLogin,'detail')"></el-input>
+            <el-input type="text" v-model="detailedLogin.md_address" placeholder="行情前置/MD_ADDRESS"></el-input>
+            <el-input
+              type="password"
+              v-model="detailedLogin.AuthorizationCode"
+              placeholder="授权码/AUTHORIZATION_CODE"
+              @keyup.enter.native="handleLogin(detailedLogin,'detail')"
+            ></el-input>
             <el-form-item>
               <el-button type="primary"  @click="handleLogin(detailedLogin,'detail')">登录</el-button>
             </el-form-item>
@@ -58,7 +69,8 @@ export default {
       loginUrl: this.URL + "/login",
       commonLogin: {
         userid: "089131",
-        password: "350888"
+        password: "350888",
+        authorization:"money"
       },
       options: [
         {
@@ -74,6 +86,7 @@ export default {
       detailedLogin: {
         userid: "",
         password: "",
+        detailedLogin:"",
         brokerid: "",
         appid: "",
         auth_code: "",
@@ -109,7 +122,6 @@ export default {
   },
   methods: {
     handleLogin(data, type) {
-      this.$router.push({ path: "/" });
       if (type === "common") {
         let simnowObj =
           this.simnowValue === "simnow24小时"
@@ -123,16 +135,13 @@ export default {
         .post(this.loginUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data;
+          this.tip(returnData.success,returnData.msg,this)
           if (returnData.success === true) {
-
             sessionStorage.setItem('token',returnData.data)
-            this.tip("success",returnData.msg,this)
             setTimeout(()=>{
               this.$store.commit('clear',true)
               this.$router.push({ path: "/" });
             },1000)
-          }else{
-            this.tip("error",returnData.msg,this)
           }
         })
         .catch(err => {
@@ -149,7 +158,7 @@ export default {
     }
   },
   mounted(){
-     this.$socket.emit('my_connect', "socket_key")
+    this.$socket.emit('my_connect', "C80580150F016B60D2A629CA46E9A8EC")
   }
 };
 </script>

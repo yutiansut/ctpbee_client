@@ -18,20 +18,6 @@ import '@/permission' // permission control
 import axios from 'axios'
 import qs from 'qs'
 Vue.prototype.$axios = axios
-// axios.interceptors.request.use(
-//   config => {
-//     const token = sessionStorage.getItem('token')
-//     if (token) {
-//       config.headers.common['MToken'] = token
-//     }
-//     if (store.state.uid) {
-//       config.headers.common['UID'] = store.state.uid
-//     }
-//     return config
-//   },
-//   err => {
-//     return Promise.reject(err)
-//   })
 Vue.prototype.$qs = qs
 
 const URL = 'http://10.40.25.15:5000'
@@ -47,6 +33,7 @@ import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   connection: URL
 }))
+// VueSocketIO.disable('heartbeats')
 
 /**
  * If you don't want to use mock-server
@@ -65,12 +52,24 @@ if (process.env.NODE_ENV === 'production') {
 
 Vue.config.productionTip = false
 
-Vue.prototype.tip = (type, msg, that) => {
+Vue.prototype.tip = (type, msg, that, reload) => {
+  var errorMsg = 'token error'
+  var tipType = type === true ? 'success' : 'error'
+  var tipMsg = msg === errorMsg ? '登录信息已过期，请重新登录!' : msg
   that.$message({
     showClose: true,
-    message: msg,
-    type: type
+    message: tipMsg,
+    type: tipType
   })
+  if (reload === true) {
+    that.reload()
+  }
+  if (msg === errorMsg) {
+    that.$store.commit('clear', false)
+    that.$router.push({
+      path: '/login'
+    })
+  }
 }
 
 new Vue({
@@ -80,7 +79,7 @@ new Vue({
   render: h => h(App)
 })
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
   const token = sessionStorage.getItem('token')
   if (token) {
     next()
