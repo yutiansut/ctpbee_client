@@ -73,8 +73,7 @@ def add_strategy(name, text):
 def delete_strategy(name: str):
     """删除策略
     """
-    if name in bee_current_app.extensions:
-        res = bee_current_app.del_extension(name)
+    bee_current_app.del_extension(name)
     file_path = is_exists(name)
     if not file_path:
         return False

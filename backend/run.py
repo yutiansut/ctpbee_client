@@ -1,11 +1,10 @@
 import logging
 import os
-from app import create_app
+from app import app
 
 # os.system("killall -9 gunicorn")
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
-app = create_app()
 
 if __name__ == '__main__':
     ## production
