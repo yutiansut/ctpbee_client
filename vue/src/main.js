@@ -12,6 +12,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -29,11 +30,20 @@ Vue.prototype.URL = URL
 Vue.use(ElementUI, {})
 
 import VueSocketIO from 'vue-socket.io'
-// import socketIO from 'socket.io-client'
+
 Vue.use(new VueSocketIO({
   connection: URL
 }))
-// VueSocketIO.disable('heartbeats')
+// this.Socket.readyState
+
+// Vue.prototype.openSocket = () => {
+//   Vue.use(new VueSocketIO({
+//     connection: URL
+//   }))
+// }
+
+import md5 from 'js-md5'
+Vue.prototype.$md5 = md5
 
 /**
  * If you don't want to use mock-server
@@ -65,7 +75,7 @@ Vue.prototype.tip = (type, msg, that, reload) => {
     that.reload()
   }
   if (msg === errorMsg) {
-    that.$store.commit('clear', false)
+    sessionStorage.removeItem('token')
     that.$router.push({
       path: '/login'
     })
@@ -79,7 +89,7 @@ new Vue({
   render: h => h(App)
 })
 
-router.beforeEach(function (to, from, next) {
+router.beforeEach(function(to, from, next) {
   const token = sessionStorage.getItem('token')
   if (token) {
     next()

@@ -25,7 +25,10 @@
             <span style="display:block;" @click="dialogVisible = true">修改授权码</span>
           </el-dropdown-item>
           <el-dropdown-item>
-            <span style="display:block;" @click="logout">退出账户</span>
+            <span style="display:block;" @click="serveConfirm = true">服务器退出</span>
+          </el-dropdown-item>
+          <el-dropdown-item>
+            <span style="display:block;" @click="logout">本地退出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -44,6 +47,18 @@
         <el-button type="primary" @click="modify(modifyCode)">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="服务器退出确认" :visible.sync="serveConfirm" width="30%" @click="serveConfirm = false">
+      <el-form label-position="right" label-width="60px" :model="serveLayoutForm">
+        <el-form-item label="授权码">
+          <el-input type="password" v-model="serveLayoutForm.authorization"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="serveConfirm = false">取 消</el-button>
+        <el-button type="primary" @click="servelogout(serveLayoutForm)">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -57,10 +72,15 @@ export default {
   data() {
     return {
       modifyUrl: this.URL + "/auth_code",
+      serveUrl:this.URL+'/logout',
       dialogVisible: false,
+      serveConfirm:false,
       token:'',
       modifyCode: {
         password: "",
+        authorization: ""
+      },
+      serveLayoutForm:{
         authorization: ""
       }
     };
@@ -90,6 +110,20 @@ export default {
         let retrunData=res.data
         this.tip(retrunData.success,retrunData.msg,this)
         this.dialogVisible = false
+      }).catch(err=>{
+        console.log(err)
+      });
+    },
+    servelogout(data){
+      this.$axios.post(this.serveUrl, this.$qs.stringify(data), {
+        headers: {
+          Authorization: "JWT " + this.token
+        }
+      }).then(res=>{
+        let retrunData=res.data
+        this.tip(retrunData.success,retrunData.msg,this)
+        this.serveConfirm = false
+        this.logout()
       }).catch(err=>{
         console.log(err)
       });
