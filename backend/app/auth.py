@@ -70,7 +70,7 @@ class Auth:
         """
         用户登录，登录成功返回token，写将登录时间写入数据库；登录失败返回失败原因
         :param user = dict(userid=userid, password=password)
-        :return:
+        :return: token
         """
         user = dict(user)
         login_time = int(time.time())
@@ -90,15 +90,15 @@ class Auth:
         }
 
         G.current_user = user_info  # current_user
-
+        print('auth',G.current_user['token'][-4:])
         G.session = dict(token=token, data=token_info)  # Strategy
-        return true_response(data=token, msg='登录成功')
+        return token
 
     @staticmethod
     def identify(request):
         """
         用户鉴权
-        :return: list
+        :return: {'success':True,data='',msg=''}
         """
         auth_header = request.headers.get('Authorization')
         if auth_header:
@@ -107,6 +107,7 @@ class Auth:
                 result = false_return(msg='请传递正确的验证头信息')
             else:
                 auth_token = auth_tokenArr[1]
+                print('ident',auth_token[-4:])
                 payload = Auth.decode_auth_token(auth_token)
                 if isinstance(payload, str):
                     result = false_return(msg=payload)

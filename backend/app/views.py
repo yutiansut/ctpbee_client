@@ -1,7 +1,5 @@
 from datetime import datetime
 from time import sleep, time
-import functools
-from flask_socketio import disconnect
 from flask import request, session
 from flask.views import MethodView
 from ctpbee import CtpBee, current_app as bee_current_app, del_app
@@ -19,7 +17,8 @@ def connect_handle():
     登录后3秒内连接socket可成功
     :return:
     """
-    if int(time()) - G.current_user.get('login_time', 0) < 2:
+    if int(time()) - G.current_user.get('login_time', 0) < 3:
+        print("socket 连接成功")
         io.emit('customEmit', "ok")
     else:
         return False
@@ -40,6 +39,7 @@ class UserCheckView(MethodView):
     """
     socket重连
     """
+
     @auth_required
     def post(self):
         # bee_current_app存在
@@ -51,7 +51,10 @@ class UserCheckView(MethodView):
                 return false_response(msg="can't be none")
             result = G.check_user(check_key)
             if result:
-                return Auth.authenticate(result)
+                token = Auth.authenticate(result)
+                print('check',token[-4:])
+
+                return true_response(data=token, msg='check key success!')
             return false_response(msg='check key error')
         return false_response(msg='Refuse')
 
@@ -74,7 +77,8 @@ class LoginView(MethodView):
                 bee_current_app.trader and \
                 bee_current_app.td_login_status:
             if userid == bee_current_app.trader.userid and password == bee_current_app.trader.password:
-                return Auth.authenticate(info)
+                token = Auth.authenticate(info)
+                return true_response(data=token, msg='登录成功')
             return false_response(msg='Refuse!')
 
         else:  # bee_current_app 不不存在
@@ -90,11 +94,16 @@ class LoginView(MethodView):
             load_strategy(bee_app)  # 加载策略
             bee_app.start()
             sleep(1)
-            if not bee_app.td_login_status:
+
+            if bee_current_app and \
+                    bee_current_app.trader and \
+                    bee_current_app.td_login_status:
+                token = Auth.authenticate(info)
+
+                return true_response(data=token, msg='重新登录成功')
+            else:
                 del_app(__name__)
-                return false_response(msg="登录出现错误")
-            token = Auth.authenticate(info)
-            return token
+                return false_response(msg="重新登录出现错误")
 
 
 class LogoutView(MethodView):
@@ -126,6 +135,7 @@ class MarketView(MethodView):
         try:
             contracts = [contract.symbol for contract in bee_current_app.recorder.get_all_contracts()]
             contracts.sort(key=lambda v: v.upper())
+            print("contract", contracts)
             io.emit("contract", contracts)
         except Exception:
             return false_response(msg="更新合约失败", )
