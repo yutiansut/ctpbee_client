@@ -61,9 +61,11 @@ class Auth:
             else:
                 raise jwt.InvalidTokenError
         except jwt.ExpiredSignatureError:
-            return 'Token过期'
+            log.error('Token过期')
+            return "token error"  # 'Token过期'
         except jwt.InvalidTokenError:
-            return '无效Token'
+            log.error('无效Token')
+            return "token error"  # '无效Token'
 
     @staticmethod
     def authenticate(user):

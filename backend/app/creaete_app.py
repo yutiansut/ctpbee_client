@@ -14,7 +14,7 @@ def init_app():
     app.add_url_rule("/login", view_func=LoginView.as_view("login"), methods=["POST"])
     app.add_url_rule("/logout", view_func=LogoutView.as_view("logout"), methods=["POST"])
     app.add_url_rule("/market", view_func=MarketView.as_view("market"), methods=["POST", "PUT"])
-    app.add_url_rule("/order_solve", view_func=OpenOrderView.as_view("order_solve"), methods=['POST', 'DELETE'])
+    app.add_url_rule("/order_solve", view_func=OpenOrderView.as_view("order_solve"), methods=["GET", 'POST', 'DELETE'])
     app.add_url_rule("/auth_code", view_func=AuthCodeView.as_view("auth_code"), methods=['PUT'])
     app.add_url_rule("/strategy", view_func=StrategyView.as_view("strategy"), methods=['GET', 'PUT', 'DELETE'])
     app.add_url_rule("/check_code", view_func=CheckCode.as_view("check_code"), methods=['POST'])

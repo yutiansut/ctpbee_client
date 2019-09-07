@@ -104,9 +104,8 @@ class MarketView(MethodView):
     def put(self):
         """ 更新contract"""
         try:
-            contracts = [contract.symbol for contract in bee_current_app.recorder.get_all_contracts()]
+            contracts = [contract.local_symbol for contract in bee_current_app.recorder.get_all_contracts()]
             contracts.sort(key=lambda v: v.upper())
-            print("contract", contracts)
             io.emit("contract", contracts)
         except Exception:
             return false_response(msg="更新合约失败", )
@@ -114,6 +113,17 @@ class MarketView(MethodView):
 
 
 class OpenOrderView(MethodView):
+    @auth_required
+    def get(self):
+        position_list = bee_current_app.recorder.get_all_positions()
+        active_order_list = [active_order._to_dict() for active_order in
+                             bee_current_app.recorder.get_all_active_orders()]
+        trade_list = [trade._to_dict() for trade in bee_current_app.recorder.get_all_trades()]
+        order_list = [order._to_dict() for order in bee_current_app.recorder.get_all_orders()]
+        result = dict(position_list=position_list, active_order_list=active_order_list, trade_list=trade_list,
+                      order_list=order_list)
+        return true_response(data=result)
+
     @auth_required
     def post(self):
         """ 发单 """
