@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import sleep
 from flask import request, session
-from flask_socketio import disconnect
+from flask_socketio import disconnect, join_room, leave_room
 from flask.views import MethodView
 from ctpbee import CtpBee, current_app as bee_current_app, del_app
 from ctpbee import helper
@@ -12,28 +12,21 @@ from app.auth import Auth, auth_required
 from app.helper import load_strategy, delete_strategy
 
 
-@io.on('connect')
-def connect_handle():
-    G.socket_blacklist.append(request.sid)
-
-
 @io.on('disconnect')
 def disconnect_handle():
-    if request.sid in G.socket_blacklist:
-        G.socket_blacklist.remove(request.sid)
+    leave_room('vip')
 
 
 @io.on('identify')
 def identify_handle(json):
-    if json['key'] == G.current_user['token']:
-        io.emit('response', 'ok')
+    if json['token'] == G.current_user['token']:
+        join_room('vip')
     else:
         try:
+            leave_room('vip')
             disconnect(request.sid)
         except Exception as e:
             print("disconnect:", e)
-    if request.sid in G.socket_blacklist:
-        G.socket_blacklist.remove(request.sid)
 
 
 class LoginView(MethodView):

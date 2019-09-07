@@ -26,8 +26,7 @@ def init_app():
 
     def emit_wrap(emit):
         def wrapp(event, *args, **kwargs):
-            print(G.socket_blacklist)
-            kwargs['skip_sid'] = G.socket_blacklist
+            kwargs['room'] = 'vip'
             emit(event, *args, **kwargs)
 
         return wrapp

@@ -38,20 +38,6 @@ class GVar:
     def current_user(self):
         return self.g['CURRENT_USER']
 
-    def check_user(self, check_key: str):
-        """
-        :param userinfo: md5
-        :return:
-        """
-        userid = self.current_user['userid']
-        password = self.current_user['password']
-        s = userid + '9615' + password
-        mdd = hashlib.md5()
-        mdd.update(s.encode('utf8'))
-        if mdd.hexdigest() == check_key:
-            return dict(userid=userid, password=password)
-        return False
-
     @current_user.setter
     def current_user(self, userinfo: dict):
         self.g['CURRENT_USER'] = userinfo
@@ -79,14 +65,6 @@ class GVar:
         else:
             self.g['SESSION'] = {}
             self.g['SESSION'][token] = info
-
-    @property
-    def socket_blacklist(self):
-        return self.g['SOCKET_BLACKLIST']
-
-    @socket_blacklist.setter
-    def socket_blacklist(self, sid):
-        self.g['SOCKET_BLACKLIST'].append(sid)
 
 
 G = GVar()
