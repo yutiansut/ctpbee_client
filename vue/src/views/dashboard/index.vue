@@ -15,6 +15,19 @@ export default {
     return {
       value: new Date()
     };
+  },
+  sockets:{
+    connect: function(data){
+      console.log('connect......'+data)
+    },
+    customEmit: function(val){
+      console.log("控制台:"+val)
+    }
+  },
+  methods:{
+  },
+  mounted(){
+    this.$socket.emit('test',666)
   }
 };
 </script>

@@ -17,6 +17,14 @@
               placeholder="授权码/AUTHORIZATION_CODE"
               @keyup.enter.native="handleLogin(detailedLogin,'common')"
             ></el-input>
+            <el-select v-model="interface" clearable placeholder="请选择">
+              <el-option
+                v-for="item in interfaceOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
             <el-select v-model="simnowValue" clearable placeholder="请选择">
               <el-option
                 v-for="item in options"
@@ -26,11 +34,15 @@
               ></el-option>
             </el-select>
             <el-form-item>
-              <el-button type="primary" @keyup.enter="handleLogin(commonLogin,'common')" @click="handleLogin(commonLogin,'common')">登录</el-button>
+              <el-button
+                type="primary"
+                @keyup.enter="handleLogin(commonLogin,'common')"
+                @click="handleLogin(commonLogin,'common')"
+              >登录</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="详细登录">
+        <el-tab-pane label="详细登录" class="detailBox">
           <el-form :model="detailedLogin">
             <el-input type="text" v-model="detailedLogin.userid" placeholder="用户名/USERNAME"></el-input>
             <el-input
@@ -50,8 +62,16 @@
               placeholder="授权码/AUTHORIZATION_CODE"
               @keyup.enter.native="handleLogin(detailedLogin,'detail')"
             ></el-input>
+            <el-select v-model="interface" clearable placeholder="请选择">
+              <el-option
+                v-for="item in interfaceOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
             <el-form-item>
-              <el-button type="primary"  @click="handleLogin(detailedLogin,'detail')">登录</el-button>
+              <el-button type="primary" @click="handleLogin(detailedLogin,'detail')">登录</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -61,17 +81,29 @@
 </template>
 
 <script>
-import { setTimeout } from 'timers';
+import { setTimeout } from "timers";
 export default {
   name: "Login",
   data() {
     return {
       loginUrl: this.URL + "/login",
+      checkUrl: this.URL + "/check_key",
       commonLogin: {
         userid: "089131",
         password: "350888",
-        authorization:"money"
+        authorization: "00000000"
       },
+      interfaceOptions: [
+        {
+          value: "ctp",
+          label: "ctp"
+        },
+        {
+          value: "ctp_se",
+          label: "ctp_se"
+        }
+      ],
+      interface: "ctp",
       options: [
         {
           value: "simnow24小时",
@@ -86,7 +118,7 @@ export default {
       detailedLogin: {
         userid: "",
         password: "",
-        detailedLogin:"",
+        detailedLogin: "",
         brokerid: "",
         appid: "",
         auth_code: "",
@@ -122,6 +154,7 @@ export default {
   },
   methods: {
     handleLogin(data, type) {
+      data["interface"] = this.interface;
       if (type === "common") {
         let simnowObj =
           this.simnowValue === "simnow24小时"
@@ -134,14 +167,19 @@ export default {
       this.$axios
         .post(this.loginUrl, this.$qs.stringify(data))
         .then(res => {
+          console.log(res);
           let returnData = res.data;
-          this.tip(returnData.success,returnData.msg,this)
+          this.tip(returnData.success, returnData.msg, this);
           if (returnData.success === true) {
-            sessionStorage.setItem('token',returnData.data)
-            setTimeout(()=>{
-              this.$store.commit('clear',true)
+            let id = data.userid;
+            let password = data.password;
+            let str = id + "9615" + password;
+            let mdStr = this.$md5(str);
+            sessionStorage.setItem("key", mdStr);
+            sessionStorage.setItem("token", returnData.data);
+            setTimeout(() => {
               this.$router.push({ path: "/" });
-            },1000)
+            }, 1000);
           }
         })
         .catch(err => {
@@ -149,17 +187,7 @@ export default {
         });
     }
   },
-  sockets:{
-    connect: function(){
-      console.log('connect......')
-    },
-    customEmit: function(val){
-      console.log(val)
-    }
-  },
-  mounted(){
-    this.$socket.emit('my_connect', "C80580150F016B60D2A629CA46E9A8EC")
-  }
+  mounted() {}
 };
 </script>
 
@@ -197,6 +225,14 @@ $width: 400px;
   .el-button {
     width: 100%;
     margin-top: 20px;
+  }
+  .detailBox {
+    .el-input {
+      margin-top: 12px;
+    }
+    .el-form-item {
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

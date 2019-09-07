@@ -42,10 +42,14 @@ export default {
       }
     }
   },
+  data(){
+    return {
+    }
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
-    }
+    },
   }
 }
 </script>

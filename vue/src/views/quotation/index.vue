@@ -26,6 +26,7 @@
 
 <script>
 export default {
+  inject:['reload'],
   data() {
     return {
       quotationUrl: this.URL + "/market",
@@ -38,16 +39,15 @@ export default {
     };
   },
   sockets: {
-    // 通信的name
-    //这里是监听connect事件
     connect: function() {
-      console.log("connect......");
+      console.log("行情:connect......");
     },
     contract: function(res) {
-      // console.log(res)
+      console.log(res)
       this.options=res
     },
     tick:function(res){
+      console.log(res)
       this.symbolObj[res.data.symbol]=res.data
       // console.log(this.symbolObj)
       this.symbolArr=[]
@@ -70,6 +70,7 @@ export default {
           }
         })
         .then(res => {
+
           let returnData=res.data
           this.tip(returnData.success,returnData.msg,this)
         })
@@ -82,6 +83,7 @@ export default {
     },
     getSymbol() {
       let token = sessionStorage.getItem("token");
+      console.log("行情:"+token)
       this.$axios
         .put(this.quotationUrl, this.$qs.stringify({name:'test'}),{
           headers: {
@@ -89,6 +91,7 @@ export default {
           }
         })
         .then(res => {
+          console.log(res)
           let returnData=res.data
           this.tip(returnData.success,returnData.msg,this)
         })
