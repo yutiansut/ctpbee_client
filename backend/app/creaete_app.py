@@ -1,8 +1,8 @@
 # this is the web client in here  you can use it to trade or read market fastly
 from flask import Flask
-from .ext import io
 from .global_var import GVar, G
-from .views import LoginView, MarketView, OpenOrderView, StrategyView, AuthCodeView, LogoutView,UserCheckView
+from .ext import io
+from .views import LoginView, MarketView, OpenOrderView, StrategyView, AuthCodeView, LogoutView
 from .strategy_view import RunCode, CheckCode, CodeManage
 from flask_cors import CORS
 
@@ -14,7 +14,6 @@ def init_app():
     app.add_url_rule("/login", view_func=LoginView.as_view("login"), methods=["POST"])
     app.add_url_rule("/logout", view_func=LogoutView.as_view("logout"), methods=["POST"])
     app.add_url_rule("/market", view_func=MarketView.as_view("market"), methods=["POST", "PUT"])
-    app.add_url_rule("/check_key", view_func=UserCheckView.as_view("check_key"), methods=["POST"])
     app.add_url_rule("/order_solve", view_func=OpenOrderView.as_view("order_solve"), methods=['POST', 'DELETE'])
     app.add_url_rule("/auth_code", view_func=AuthCodeView.as_view("auth_code"), methods=['PUT'])
     app.add_url_rule("/strategy", view_func=StrategyView.as_view("strategy"), methods=['GET', 'PUT', 'DELETE'])
@@ -24,5 +23,15 @@ def init_app():
     GVar.init_app(app)
     G.load_authorization()
     io.init_app(app, cors_allowed_origins="*")
+
+    def emit_wrap(emit):
+        def wrapp(event, *args, **kwargs):
+            print(G.socket_blacklist)
+            kwargs['skip_sid'] = G.socket_blacklist
+            emit(event, *args, **kwargs)
+
+        return wrapp
+
+    io.emit = emit_wrap(io.emit)
     CORS(app)
     return app

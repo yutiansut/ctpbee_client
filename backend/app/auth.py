@@ -90,7 +90,6 @@ class Auth:
         }
 
         G.current_user = user_info  # current_user
-        print('auth',G.current_user['token'][-4:])
         G.session = dict(token=token, data=token_info)  # Strategy
         return token
 
@@ -107,7 +106,7 @@ class Auth:
                 result = false_return(msg='请传递正确的验证头信息')
             else:
                 auth_token = auth_tokenArr[1]
-                print('ident',auth_token[-4:])
+                print('ident', auth_token[-4:])
                 payload = Auth.decode_auth_token(auth_token)
                 if isinstance(payload, str):
                     result = false_return(msg=payload)

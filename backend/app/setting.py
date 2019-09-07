@@ -1,4 +1,12 @@
-AUTHORIZATION = 'pbkdf2:sha256:150000$Yx9cGsYW$df0650ec4b39e3f1713e564456730f5622fc6d6308e453ed205f6efd9e195af1'  # money
+from random import choice
+from string import ascii_letters as s, digits as d
 
-SECRET_KEY = 'EB7BA8FEAFF88261813B39ECB150564D'
-JWT_SECRET_KEY = 'E74F610FD1EC683F41B15415304CF8A7'
+gen_key = lambda: ''.join([choice(s + d) for _ in range(32)])
+
+AUTHORIZATION = 'pbkdf2:sha256:150000$w9eeICL7$cdff5599724cff2ff5882aa34de9b953ace6aaccf9b00ea65cbfbf9bb897c507'  # 000000
+
+SECRET_KEY = gen_key()
+JWT_SECRET_KEY = gen_key()
+CURRENT_USER = dict()
+SESSION = dict()
+SOCKET_BLACKLIST = list()

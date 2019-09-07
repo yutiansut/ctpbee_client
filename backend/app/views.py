@@ -1,6 +1,7 @@
 from datetime import datetime
-from time import sleep, time
+from time import sleep
 from flask import request, session
+from flask_socketio import disconnect
 from flask.views import MethodView
 from ctpbee import CtpBee, current_app as bee_current_app, del_app
 from ctpbee import helper
@@ -13,50 +14,26 @@ from app.helper import load_strategy, delete_strategy
 
 @io.on('connect')
 def connect_handle():
-    """
-    登录后3秒内连接socket可成功
-    :return:
-    """
-    if int(time()) - G.current_user.get('login_time', 0) < 3:
-        print("socket 连接成功")
-        io.emit('customEmit', "ok")
+    G.socket_blacklist.append(request.sid)
+
+
+@io.on('disconnect')
+def disconnect_handle():
+    if request.sid in G.socket_blacklist:
+        G.socket_blacklist.remove(request.sid)
+
+
+@io.on('identify')
+def identify_handle(json):
+    if json['key'] == G.current_user['token']:
+        io.emit('response', 'ok')
     else:
-        return False
-
-
-class AuthCodeView(MethodView):
-    @auth_required
-    def put(self):
-        password = request.values.get('password')
-        code = request.values.get('authorization', "")
-        if password == bee_current_app.trader.password and len(code) >= 6:
-            G.authorization = code
-            return true_response(msg='修改成功')
-        return false_response(msg='修改失败')
-
-
-class UserCheckView(MethodView):
-    """
-    socket重连
-    """
-
-    @auth_required
-    def post(self):
-        # bee_current_app存在
-        if bee_current_app and \
-                bee_current_app.trader and \
-                bee_current_app.td_login_status:
-            check_key = request.values.get('check_key')
-            if not check_key:
-                return false_response(msg="can't be none")
-            result = G.check_user(check_key)
-            if result:
-                token = Auth.authenticate(result)
-                print('check',token[-4:])
-
-                return true_response(data=token, msg='check key success!')
-            return false_response(msg='check key error')
-        return false_response(msg='Refuse')
+        try:
+            disconnect(request.sid)
+        except Exception as e:
+            print("disconnect:", e)
+    if request.sid in G.socket_blacklist:
+        G.socket_blacklist.remove(request.sid)
 
 
 class LoginView(MethodView):
@@ -217,3 +194,14 @@ class StrategyView(MethodView):
         if delete_strategy(name):
             return true_response(msg=f'删除{name}成功')
         return false_response(msg=f'删除{name}失败')
+
+
+class AuthCodeView(MethodView):
+    @auth_required
+    def put(self):
+        password = request.values.get('password')
+        code = request.values.get('authorization', "")
+        if password == bee_current_app.trader.password and len(code) >= 6:
+            G.authorization = code
+            return true_response(msg='修改成功')
+        return false_response(msg='修改失败')

@@ -36,7 +36,7 @@ class GVar:
 
     @property
     def current_user(self):
-        return self.g.get('CURRENT_USER', {})
+        return self.g['CURRENT_USER']
 
     def check_user(self, check_key: str):
         """
@@ -58,7 +58,7 @@ class GVar:
 
     @property
     def session(self):
-        return self.g.get('SESSION', {})
+        return self.g['SESSION']
 
     @session.setter
     def session(self, raw: dict):
@@ -79,6 +79,14 @@ class GVar:
         else:
             self.g['SESSION'] = {}
             self.g['SESSION'][token] = info
+
+    @property
+    def socket_blacklist(self):
+        return self.g['SOCKET_BLACKLIST']
+
+    @socket_blacklist.setter
+    def socket_blacklist(self, sid):
+        self.g['SOCKET_BLACKLIST'].append(sid)
 
 
 G = GVar()
