@@ -19,7 +19,8 @@ def disconnect_handle():
 
 @io.on('identify')
 def identify_handle(json):
-    if json['token'] == G.current_user['token']:
+    if isinstance(json, dict) and G.current_user.get('token') and \
+            json.get('token', "") == G.current_user['token']:
         join_room('vip')
     else:
         try:

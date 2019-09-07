@@ -106,7 +106,6 @@ class Auth:
                 result = false_return(msg='请传递正确的验证头信息')
             else:
                 auth_token = auth_tokenArr[1]
-                print('ident', auth_token[-4:])
                 payload = Auth.decode_auth_token(auth_token)
                 if isinstance(payload, str):
                     result = false_return(msg=payload)
