@@ -278,7 +278,6 @@ class CodeManage(MethodView):
     @auth_required
     def post(self):
         pattern = r"ext\s*=\s*\w*[(][\"\'](.*)[\"\'][)]"
-        print(G.session)
         se = G.session[session['token']]
 
         text = request.values.get('text')
