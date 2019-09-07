@@ -50,6 +50,12 @@ export default {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
+  },
+  mounted(){
+    let token =sessionStorage.getItem('token')
+    if(token){
+       this.$socket.emit('identify',{"token":token})
+    }
   }
 }
 </script>

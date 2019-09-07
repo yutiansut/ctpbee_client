@@ -12,7 +12,6 @@ import App from './App'
 import store from './store'
 import router from './router'
 
-
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -34,16 +33,6 @@ import VueSocketIO from 'vue-socket.io'
 Vue.use(new VueSocketIO({
   connection: URL
 }))
-// this.Socket.readyState
-
-// Vue.prototype.openSocket = () => {
-//   Vue.use(new VueSocketIO({
-//     connection: URL
-//   }))
-// }
-
-import md5 from 'js-md5'
-Vue.prototype.$md5 = md5
 
 /**
  * If you don't want to use mock-server
@@ -63,6 +52,7 @@ if (process.env.NODE_ENV === 'production') {
 Vue.config.productionTip = false
 
 Vue.prototype.tip = (type, msg, that, reload) => {
+  console.log(666)
   var errorMsg = 'token error'
   var tipType = type === true ? 'success' : 'error'
   var tipMsg = msg === errorMsg ? '登录信息已过期，请重新登录!' : msg
@@ -71,9 +61,9 @@ Vue.prototype.tip = (type, msg, that, reload) => {
     message: tipMsg,
     type: tipType
   })
-  if (reload === true) {
-    that.reload()
-  }
+  // if (reload === true) {
+  //   that.reload()
+  // }
   if (msg === errorMsg) {
     sessionStorage.removeItem('token')
     that.$router.push({

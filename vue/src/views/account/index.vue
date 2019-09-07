@@ -17,7 +17,7 @@ export default {
   },
   sockets:{
     connect: function(){
-      console.log('connect......')
+      console.log('账户已连接')
     },
     account: function(res){
       console.log(res)

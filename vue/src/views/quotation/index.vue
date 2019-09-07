@@ -10,11 +10,11 @@
     <h4>订阅列表</h4>
     <el-table :data="symbolArr" border style="width: 100%">
       <el-table-column prop="name" label="中文名"></el-table-column>
-      <el-table-column prop="symbol" label="品种"></el-table-column>
+      <el-table-column prop="local_symbol" label="品种"></el-table-column>
       <el-table-column prop="last_price" label="行情"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="medium" @click="order(scope.row.symbol)">
+          <el-button type="primary" size="medium" @click="order(scope.row.local_symbol)">
             前往下单
             <i class="el-icon-upload el-icon--right"></i>
           </el-button>
@@ -40,10 +40,10 @@ export default {
   },
   sockets: {
     connect: function() {
-      console.log("行情:connect......");
+      console.log("行情已连接");
     },
     contract: function(res) {
-      console.log(res)
+      // console.log(res)
       this.options=res
     },
     tick:function(res){
@@ -70,8 +70,8 @@ export default {
           }
         })
         .then(res => {
-
           let returnData=res.data
+          sessionStorage.setItem('symbolName',symbol)
           this.tip(returnData.success,returnData.msg,this)
         })
         .catch(err => {
@@ -79,11 +79,16 @@ export default {
         });
     },
     order(symbol){
-      console.log(symbol)
+      sessionStorage.setItem('symbolName',symbol)
+      this.$router.push({
+        path:'/order/index',
+        query:{
+          symbol:symbol
+        }
+      })
     },
     getSymbol() {
       let token = sessionStorage.getItem("token");
-      console.log("行情:"+token)
       this.$axios
         .put(this.quotationUrl, this.$qs.stringify({name:'test'}),{
           headers: {
@@ -91,8 +96,8 @@ export default {
           }
         })
         .then(res => {
-          console.log(res)
           let returnData=res.data
+
           this.tip(returnData.success,returnData.msg,this)
         })
         .catch(err => {

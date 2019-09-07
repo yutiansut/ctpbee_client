@@ -51,6 +51,7 @@ export default {
         .then(res => {
           let returnData=res.data
           this.tip(returnData.success,returnData.msg,this,true)
+          this.$router.push('/empty')
         })
         .catch(err => {
           console.log(err);
@@ -83,6 +84,7 @@ export default {
             .then(res => {
               let returnData=res.data
               this.tip(returnData.success,returnData.msg,this,true)
+              this.$router.push('/empty')
             })
             .catch(err => {
               console.log(err);

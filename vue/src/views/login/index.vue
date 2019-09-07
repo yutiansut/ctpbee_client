@@ -171,11 +171,6 @@ export default {
           let returnData = res.data;
           this.tip(returnData.success, returnData.msg, this);
           if (returnData.success === true) {
-            let id = data.userid;
-            let password = data.password;
-            let str = id + "9615" + password;
-            let mdStr = this.$md5(str);
-            sessionStorage.setItem("key", mdStr);
             sessionStorage.setItem("token", returnData.data);
             setTimeout(() => {
               this.$router.push({ path: "/" });

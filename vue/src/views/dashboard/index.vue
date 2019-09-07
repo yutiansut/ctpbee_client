@@ -18,7 +18,7 @@ export default {
   },
   sockets:{
     connect: function(data){
-      console.log('connect......'+data)
+      console.log('connect......')
     },
     customEmit: function(val){
       console.log("控制台:"+val)
@@ -27,7 +27,6 @@ export default {
   methods:{
   },
   mounted(){
-    this.$socket.emit('test',666)
   }
 };
 </script>
