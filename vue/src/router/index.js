@@ -121,7 +121,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'retreat',
         component: () => import('@/views/retreat/index'),
-        meta: { title: '回 撤', icon: '回撤' }
+        meta: { title: '回 测', icon: '回撤' }
       }
     ]
   },

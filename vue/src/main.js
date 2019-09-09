@@ -52,7 +52,6 @@ if (process.env.NODE_ENV === 'production') {
 Vue.config.productionTip = false
 
 Vue.prototype.tip = (type, msg, that, reload) => {
-  console.log(666)
   var errorMsg = 'token error'
   var tipType = type === true ? 'success' : 'error'
   var tipMsg = msg === errorMsg ? '登录信息已过期，请重新登录!' : msg
