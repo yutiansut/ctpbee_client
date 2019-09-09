@@ -8,9 +8,6 @@ from app.setting import JWT_SECRET_KEY
 from app.ext import log
 from app.global_var import G
 from app.default_settings import true_return, false_return, false_response, true_response
-import hashlib
-
-mdd = hashlib.md5()
 
 
 class Auth:
@@ -108,6 +105,7 @@ class Auth:
                 result = false_return(msg='请传递正确的验证头信息')
             else:
                 auth_token = auth_tokenArr[1]
+
                 payload = Auth.decode_auth_token(auth_token)
                 if isinstance(payload, str):
                     result = false_return(msg=payload)

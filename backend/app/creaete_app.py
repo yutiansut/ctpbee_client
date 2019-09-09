@@ -2,7 +2,7 @@
 from flask import Flask
 from .global_var import GVar, G
 from .ext import io
-from .views import LoginView, MarketView, OpenOrderView, StrategyView, AuthCodeView, LogoutView
+from .views import LoginView, MarketView, OpenOrderView, StrategyView, AuthCodeView, LogoutView, PositionView
 from .strategy_view import RunCode, CheckCode, CodeManage
 from flask_cors import CORS
 
@@ -20,6 +20,7 @@ def init_app():
     app.add_url_rule("/check_code", view_func=CheckCode.as_view("check_code"), methods=['POST'])
     app.add_url_rule("/run_code", view_func=RunCode.as_view("run_code"), methods=['POST'])
     app.add_url_rule("/code", view_func=CodeManage.as_view("code"), methods=['GET', 'POST'])
+    app.add_url_rule("/close_position", view_func=PositionView.as_view("close_position"), methods=['POST'])
     GVar.init_app(app)
     G.load_authorization()
     io.init_app(app, cors_allowed_origins="*")
