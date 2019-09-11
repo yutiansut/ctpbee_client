@@ -1,3 +1,6 @@
+import json
+import re
+
 from flask import request
 from flask.views import MethodView
 from app.auth import auth_required
@@ -6,16 +9,37 @@ from app.default_settings import true_response, false_response
 
 
 class ConfigView(MethodView):
+    keys = [
+        "REFRESH_INTERVAL",
+        "INSTRUMENT_INDEPEND",
+        "SLIPPAGE_SHORT",
+        "SLIPPAGE_BUY",
+        "SLIPPAGE_COVER",
+        "SLIPPAGE_SELL",
+        "CLOSE_PATTERN",
+        "SHARED_FUNC"]
+
     @auth_required
     def get(self):
-        config = bee_current_app.config
-        return true_response(data=config)
+        data = {}
+        for key in self.keys:
+            data[key] = bee_current_app.config[key]
+        return true_response(data=data)
 
     @auth_required
     def put(self):
-        key = request.values.get('key')
-        value = request.values.get('value')
-        if key not in bee_current_app.config:
-            return false_response(msg='key error')
-        bee_current_app.config[key] = value
+        data = request.values.to_dict()
+        print(data)
+        if not data:
+            return false_response(msg='含空项')
+        for k in data.keys():
+            if k in self.keys:
+                if data[k].isdigit() or re.compile(r'^[-+]?[0-9]+\.[0-9]+$').match(data[k]):
+                    bee_current_app.config[k] = float(data[k])
+                elif data[k] == 'true':
+                    bee_current_app.config[k] = True
+                elif data[k] == 'false':
+                    bee_current_app.config[k] = False
+                else:
+                    bee_current_app.config[k] = data[k]
         return true_response(msg='修改成功')

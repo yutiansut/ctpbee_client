@@ -22,7 +22,7 @@ def init_app():
     app.add_url_rule("/code", view_func=CodeManage.as_view("code"), methods=['GET', 'POST'])
     app.add_url_rule("/close_position", view_func=PositionView.as_view("close_position"), methods=['POST'])
     app.add_url_rule("/bar", view_func=BarView.as_view("bar"), methods=['POST'])
-    app.add_url_rule("/config", view_func=ConfigView.as_view("config"), methods=['GET', 'POST'])
+    app.add_url_rule("/config", view_func=ConfigView.as_view("config"), methods=['GET', 'PUT'])
     GVar.init_app(app)
     G.load_authorization()
     io.init_app(app, cors_allowed_origins="*")
