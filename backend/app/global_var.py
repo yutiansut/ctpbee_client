@@ -1,5 +1,4 @@
 import os
-import hashlib
 
 
 class GVar:
@@ -52,6 +51,7 @@ class GVar:
         info = raw['data']
         se = self.g.get('SESSION')  # 获取session {}
         if se:
+            se = self.g['SESSION']
             if len(se) > 3:
                 temp = se.get(token, {})
                 se.clear()  # 清空
