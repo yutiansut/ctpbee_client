@@ -167,7 +167,6 @@ export default {
       this.$axios
         .post(this.loginUrl, this.$qs.stringify(data))
         .then(res => {
-          console.log(res);
           let returnData = res.data;
           this.tip(returnData.success, returnData.msg, this);
           if (returnData.success === true) {

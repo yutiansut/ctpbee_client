@@ -22,7 +22,7 @@ export default {
       console.log('账户已连接')
     },
     account: function(res){
-      console.log(res)
+      // console.log(res)
       let returnData=res.data
       if(returnData.success===false){
         this.$message({

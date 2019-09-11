@@ -47,7 +47,7 @@ export default {
       this.options=res
     },
     tick:function(res){
-      console.log(res)
+      // console.log(res)
       this.symbolObj[res.data.symbol]=res.data
       // console.log(this.symbolObj)
       this.symbolArr=[]

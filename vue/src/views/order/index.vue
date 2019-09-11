@@ -1,6 +1,29 @@
 <template>
   <div class="order">
-    <el-row :gutter="20">
+    <transition enter-active-class="zoomIn" leave-active-class="zoomOut">
+      <div class="journal animated faster" v-show="journal">
+        <p>
+          <span>日志信息</span>
+          <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
+        </p>
+        <el-table :data="tableData" stripe style="width: 100%">
+          <el-table-column prop="date" label="日期" width="180"></el-table-column>
+          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
+          <el-table-column prop="address" label="地址"></el-table-column>
+        </el-table>
+      </div>
+    </transition>
+
+    <el-button type="warning" icon="el-icon-star-off" circle class="journalIcon" @click="journal = !journal"></el-button>
+
+    <el-row :gutter="10">
+      <el-col :span="18" :xs="24">
+        <el-card class="box-card" id="kline">
+          <div ref="klineBox" style="overflow:auto" id="klineBox">
+            <React-kline v-if="klineFlag"></React-kline>
+          </div>
+        </el-card>
+      </el-col>
       <el-col :span="6" :xs="24">
         <el-card class="box-card">
           <table class="tickTab">
@@ -12,9 +35,9 @@
         </el-card>
       </el-col>
     </el-row>
-    <br>
-    <el-row :gutter="20">
-      <el-col :span="16" :xs="24">
+    <br />
+    <el-row :gutter="10">
+      <el-col :span="18" :xs="24">
         <el-card class="box-card">
           <el-tabs tab-position="top">
             <el-tab-pane label="持仓数据">
@@ -79,9 +102,9 @@
           </el-tabs>
         </el-card>
       </el-col>
-      <el-col :span="8" :xs="24">
+      <el-col :span="6" :xs="24">
         <el-card class="box-card">
-          <el-form label-position="right" label-width="50px" :model="orderForm">
+          <el-form label-position="right" label-width="40px" :model="orderForm">
             <el-form-item label="合约">
               <el-input v-model="orderForm.local_symbol" readonly></el-input>
             </el-form-item>
@@ -113,12 +136,39 @@
 </template>
 
 <script>
+import ReactKline from "./kline";
+import elementResizeDetectorMaker from "element-resize-detector";
+const App = {
+  render() {
+    return (
+      <ReactKline
+        width={600}
+        height={400}
+        ranges={["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"]}
+        symbol={"BTC"}
+        symbolName={"BTC/USD"}
+        intervalTime={5000}
+        depthWidth={50}
+        onRequestData={this.onRequestData}
+      />
+    );
+  },
+  methods: {
+    onRequestData(param, callback) {
+      let data = "";
+      callback(data);
+    }
+  }
+};
 export default {
   data() {
     return {
       orderUrl: this.URL + "/order_solve",
       positionUrl: this.URL + "/close_position",
+      journal: false,
       token: "",
+      klineFlag: false,
+      klineBoxWidth: "",
       orderForm: {
         local_symbol: "",
         price: ""
@@ -140,6 +190,28 @@ export default {
       activeOrderData: [],
       orderData: [],
       tradeData: [],
+      tableData: [
+        {
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市"
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          address: "上海市"
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎",
+          address: "上海市"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市"
+        }
+      ],
       tick_map: {
         ask_price_1: "买一价",
         ask_volume_1: "买一量",
@@ -155,6 +227,9 @@ export default {
       }
     };
   },
+  components: {
+    ReactKline
+  },
   watch: {
     volume(newVolume, oldVolume) {
       if (newVolume < 1) {
@@ -167,6 +242,7 @@ export default {
       console.log("下单已连接");
     },
     tick: function(res) {
+      // console.log(res)
       let data = res.data;
       if (res.data.local_symbol !== this.orderForm.local_symbol) {
         return;
@@ -230,19 +306,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    orderTip() {
-      let symbolName = sessionStorage.getItem("symbolName");
-      if (!symbolName) {
-        this.$alert("请先订阅行情！", "友情提示", {
-          confirmButtonText: "确定",
-          callback: action => {
-            this.$router.push({
-              path: "/quotation/index"
-            });
-          }
-        });
-      }
     },
     business(data, transactionType) {
       if (data.price === "") {
@@ -316,18 +379,48 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    getWidth() {
+      // console.log(this.$refs.klineBox.offsetWidth);
+      this.klineBoxWidth = this.$refs.klineBox.offsetWidth;
+      this.$store.commit("setWidth", this.$refs.klineBox.offsetWidth);
+      // console.log(this.$store.state.width);
+      this.klineFlag = true;
+    },
+    handleClose(done) {
+      done();
     }
   },
   mounted() {
-    this.orderTip();
+    let symbolName = sessionStorage.getItem("symbolName");
+    if (!symbolName) {
+      return this.$alert("请先订阅行情！", "友情提示", {
+        confirmButtonText: "确定",
+        callback: action => {
+          this.$router.push({
+            path: "/quotation/index"
+          });
+        }
+      });
+    }
     if (this.$route.query.symbol) {
       this.orderForm.local_symbol = this.$route.query.symbol;
     } else {
       this.orderForm.local_symbol = sessionStorage.getItem("symbolName");
     }
-
     this.token = sessionStorage.getItem("token");
     this.getTabData();
+    this.getWidth();
+
+    var that = this;
+    elementResizeDetectorMaker().listenTo(
+      document.getElementById("klineBox"),
+      function(element) {
+        var width = element.offsetWidth;
+        var height = element.offsetHeight;
+        that.$store.commit("setWidth", width);
+      }
+    );
   }
 };
 </script>
@@ -359,6 +452,45 @@ export default {
       color: #606266;
       font-size: 12px;
     }
+  }
+  #kline {
+    .el-card__body {
+      padding: 0px;
+    }
+    .chart_container {
+      border: 1px solid #eee;
+    }
+    #sizeIcon{
+      display: none;
+    }
+  }
+  .journal {
+    width: 50%;
+    // height: 50px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    z-index: 999;
+    padding: 10px;
+    span {
+      margin-left: 10px;
+    }
+    .closeicon {
+      float: right;
+      margin-right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+  .journalIcon {
+    position: fixed;
+    top:60px;
+    right: 5px;
+    z-index: 999;
   }
 }
 </style>

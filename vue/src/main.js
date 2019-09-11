@@ -34,6 +34,10 @@ Vue.use(new VueSocketIO({
   connection: URL
 }))
 
+import animated from 'animate.css'
+
+Vue.use(animated)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -60,9 +64,9 @@ Vue.prototype.tip = (type, msg, that, reload) => {
     message: tipMsg,
     type: tipType
   })
-  // if (reload === true) {
-  //   that.reload()
-  // }
+  if (reload === true) {
+    that.reload()
+  }
   if (msg === errorMsg) {
     sessionStorage.removeItem('token')
     that.$router.push({
