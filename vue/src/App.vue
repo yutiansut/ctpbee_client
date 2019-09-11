@@ -30,32 +30,6 @@ export default {
     if (!token) {
       this.$router.push({ path: "/login" });
     }
-  },
-  methods: {
-    // check() {
-    //   let mdStr = sessionStorage.getItem("key");
-    //   let token = sessionStorage.getItem("token");
-    //   console.log("begin:" + token);
-    //   if (!token) {
-    //     return;
-    //   }
-    //   this.$axios
-    //     .post(this.checkUrl, this.$qs.stringify({ check_key: mdStr }), {
-    //       headers: {
-    //         Authorization: "JWT " + token
-    //       }
-    //     })
-    //     .then(res => {
-    //       let returnData = res.data;
-    //       console.log("check:" + returnData.data);
-    //       if (returnData.success === true) {
-    //         sessionStorage.setItem("token", returnData.data);
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
   }
 };
 </script>

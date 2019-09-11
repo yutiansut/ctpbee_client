@@ -33,7 +33,12 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog title="修改授权码" :visible.sync="dialogVisible" width="30%" @click="dialogVisible = false">
+    <el-dialog
+      title="修改授权码"
+      :visible.sync="dialogVisible"
+      width="30%"
+      @click="dialogVisible = false"
+    >
       <el-form label-position="right" label-width="60px" :model="modifyCode">
         <el-form-item label="密码">
           <el-input type="password" v-model="modifyCode.password"></el-input>
@@ -48,7 +53,12 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="服务器退出确认" :visible.sync="serveConfirm" width="30%" @click="serveConfirm = false">
+    <el-dialog
+      title="服务器退出确认"
+      :visible.sync="serveConfirm"
+      width="30%"
+      @click="serveConfirm = false"
+    >
       <el-form label-position="right" label-width="60px" :model="serveLayoutForm">
         <el-form-item label="授权码">
           <el-input type="password" v-model="serveLayoutForm.authorization"></el-input>
@@ -72,15 +82,15 @@ export default {
   data() {
     return {
       modifyUrl: this.URL + "/auth_code",
-      serveUrl:this.URL+'/logout',
+      serveUrl: this.URL + "/logout",
       dialogVisible: false,
-      serveConfirm:false,
-      token:'',
+      serveConfirm: false,
+      token: "",
       modifyCode: {
         password: "",
         authorization: ""
       },
-      serveLayoutForm:{
+      serveLayoutForm: {
         authorization: ""
       }
     };
@@ -102,35 +112,43 @@ export default {
       this.$router.push({ path: "/login" });
     },
     modify(data) {
-      this.$axios.put(this.modifyUrl, this.$qs.stringify(data), {
-        headers: {
-          Authorization: "JWT " + this.token
-        }
-      }).then(res=>{
-        let retrunData=res.data
-        this.tip(retrunData.success,retrunData.msg,this)
-        this.dialogVisible = false
-      }).catch(err=>{
-        console.log(err)
-      });
+      this.$axios
+        .put(this.modifyUrl, this.$qs.stringify(data), {
+          headers: {
+            Authorization: "JWT " + this.token
+          }
+        })
+        .then(res => {
+          let retrunData = res.data;
+          this.tip(retrunData.success, retrunData.msg, this);
+          this.dialogVisible = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
-    servelogout(data){
-      this.$axios.post(this.serveUrl, this.$qs.stringify(data), {
-        headers: {
-          Authorization: "JWT " + this.token
-        }
-      }).then(res=>{
-        let retrunData=res.data
-        this.tip(retrunData.success,retrunData.msg,this)
-        this.serveConfirm = false
-        this.logout()
-      }).catch(err=>{
-        console.log(err)
-      });
+    servelogout(data) {
+      this.$axios
+        .post(this.serveUrl, this.$qs.stringify(data), {
+          headers: {
+            Authorization: "JWT " + this.token
+          }
+        })
+        .then(res => {
+          let retrunData = res.data;
+          this.tip(retrunData.success, retrunData.msg, this);
+          this.serveConfirm = false;
+          if (retrunData.success === true) {
+            this.logout();
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   mounted() {
-    this.token=sessionStorage.getItem('token')
+    this.token = sessionStorage.getItem("token");
   }
 };
 </script>
