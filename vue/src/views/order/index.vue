@@ -20,7 +20,9 @@
       <el-col :span="18" :xs="24">
         <el-card class="box-card" id="kline">
           <div ref="klineBox" style="overflow:auto" id="klineBox">
-            <React-kline v-if="klineFlag"></React-kline>
+            <template v-if="klineFlag">
+              <React-kline ></React-kline>
+            </template>
           </div>
         </el-card>
       </el-col>
@@ -138,28 +140,22 @@
 <script>
 import ReactKline from "./kline";
 import elementResizeDetectorMaker from "element-resize-detector";
-const App = {
-  render() {
-    return (
-      <ReactKline
-        width={600}
-        height={400}
-        ranges={["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"]}
-        symbol={"BTC"}
-        symbolName={"BTC/USD"}
-        intervalTime={5000}
-        depthWidth={50}
-        onRequestData={this.onRequestData}
-      />
-    );
-  },
-  methods: {
-    onRequestData(param, callback) {
-      let data = "";
-      callback(data);
-    }
-  }
-};
+// const App = {
+//   render() {
+//     return (
+//       <ReactKline
+//         width={600}
+//         height={400}
+//         ranges={["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"]}
+//         symbol={"BTC"}
+//         symbolName={"BTC/USD"}
+//         intervalTime={5000}
+//         depthWidth={50}
+//         onRequestData={this.onRequestData}
+//       />
+//     );
+//   }
+// };
 export default {
   data() {
     return {

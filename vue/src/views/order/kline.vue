@@ -1,25 +1,30 @@
 <script>
 import "@/assets/css/main.css";
 import Kline from "@/assets/js/kline.js";
-const ReactKline = {
+export default {
+  inject:['reload'],
   data() {
-    var props = this.$props;
-    this.__state = {
-      props: props,
+    // var props = this.$props;
+    // this.__state = {
+    //   props: props,
+    //   kline: null,
+    //   klineData: [],
+    //   local_symbol: ""
+    // };
+    // return this.__state;
+    return {
       kline: null,
-      klineData: "",
-      local_symbol:""
-    };
-    return this.__state;
+      klineData: [],
+      local_symbol: ""
+    }
   },
   sockets: {
     connect: function() {
       console.log("K线已连接");
     },
-    bar: function(res) {
-      console.log("bar",res);
-      if (res.local_symbol === this.local_symbol) {
-        this.klineData.push(res.data);
+    bar:function(res){
+      if (res.local_symbol === sessionStorage.getItem("symbolName")) {
+         this.klineData.push(res.data);
       }
     }
   },
@@ -27,47 +32,6 @@ const ReactKline = {
     "$store.state.width": function(newWidth) {
       this.resize(newWidth, 550);
     }
-  },
-  async mounted() {
-    this.local_symbol = sessionStorage.getItem("symbolName");
-    try {
-      const token = sessionStorage.getItem("token");
-      let returnData = await this.$axios.post(
-        this.URL + "/bar",
-        this.$qs.stringify({ local_symbol: this.local_symbol }),
-        {
-          headers: {
-            Authorization: "JWT " + token
-          }
-        }
-      );
-      if(returnData.data.success===true){
-        this.klineData=returnData.data.data
-      }else{
-        this.tip(returnData.data.success,returnData.data.msg,this)
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    let cfg = {
-      width: 600,
-      height: 400,
-      theme: "dark",
-      language: "zh-cn",
-      ranges: ["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"],
-      symbol: this.local_symbol,
-      symbolName: this.local_symbol,
-      limit: 1000,
-      intervalTime: 5000,
-      debug: false,
-      depthWidth: 50,
-      onRequestData: this.onRequestData
-    };
-    Object.assign(cfg, this.$data.props);
-    this.$data.kline = new Kline(cfg);
-    this.$data.kline.draw();
-    this.resize(this.$store.state.width, 550);
-    this.setTheme("light");
   },
   render() {
     return (
@@ -1405,7 +1369,58 @@ const ReactKline = {
         }
       });
     }
-  }
+  },
+  async mounted() {
+    this.local_symbol = sessionStorage.getItem("symbolName");
+    console.log(this.local_symbol)
+    try {
+      const token = sessionStorage.getItem("token");
+      let returnData = await this.$axios.post(
+        this.URL + "/bar",
+        this.$qs.stringify({ local_symbol: this.local_symbol }),
+        {
+          headers: {
+            Authorization: "JWT " + token
+          }
+        }
+      );
+      if (returnData.data.success === true) {
+        if (returnData.data.data.length === 0) {
+          this.$message({
+            showClose: true,
+            message: "当前合约k线数据为空,请尝试刷新页面或者订阅行情，不影响正常运行！",
+            type: "error"
+          });
+        }
+        this.klineData = returnData.data.data;
+      } else {
+        this.tip(returnData.data.success, returnData.data.msg, this);
+      }
+      console.log(this.klineData)
+    } catch (err) {
+      console.log(err);
+    }
+    console.log("test",this.local_symbol)
+    let cfg = {
+      width: 600,
+      height: 400,
+      theme: "dark",
+      language: "zh-cn",
+      ranges: ["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"],
+      symbol: this.local_symbol,
+      symbolName: this.local_symbol,
+      limit: 1000,
+      intervalTime: 5000,
+      debug: false,
+      depthWidth: 50,
+      onRequestData: this.onRequestData
+    };
+    console.log("7777",cfg.symbol)
+    Object.assign(cfg, this.$data.props);
+    this.$data.kline = new Kline(cfg);
+    this.$data.kline.draw();
+    this.resize(this.$store.state.width, 550);
+    this.setTheme("light");
+  },
 };
-export default ReactKline;
 </script>
