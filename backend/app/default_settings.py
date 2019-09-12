@@ -2,13 +2,15 @@ import json
 import os
 import time
 from json import JSONDecodeError
-
+from datetime import datetime
 from flask import make_response
 from flask_socketio import SocketIO
 
-from ctpbee import CtpbeeApi
+from ctpbee import CtpbeeApi, VLogger
 from ctpbee.constant import LogData, AccountData, ContractData, BarData, OrderData, PositionData, TickData, SharedData, \
     TradeData
+from app.model import db
+from app.ext import io
 
 
 class DefaultSettings(CtpbeeApi):
@@ -46,12 +48,13 @@ class DefaultSettings(CtpbeeApi):
         pass
 
     def on_bar(self, bar: BarData) -> None:
-        timeArray = time.strptime(str(bar.datetime), "%Y-%m-%d %H:%M:%S")
-        # 转换成时间戳
-        timestamp = round(time.mktime(timeArray) * 1000)
+        timestamp = round(bar.datetime.timestamp() * 1000)
+
+        db[bar.local_symbol].insert(dict(timestamp=timestamp, open_price=bar.open_price, high_price=bar.high_price,
+                                         low_price=bar.low_price, close_price=bar.close_price, volume=bar.volume))
         info = [timestamp, bar.open_price, bar.high_price, bar.low_price,
                 bar.close_price, bar.volume]
-        self.global_bar[bar.local_symbol].append(info)
+        self.io.emit("bar", {"local_symbol": bar.local_symbol, "data": info})
 
     def on_order(self, order: OrderData) -> None:
         # 更新活跃报单
@@ -159,6 +162,11 @@ class DefaultSettings(CtpbeeApi):
 
     def on_init(self, init):
         pass
+
+
+class VLog(VLogger):
+    def handler_record(self, record):
+        io.emit('log', record)
 
 
 def true_response(msg='', data=''):

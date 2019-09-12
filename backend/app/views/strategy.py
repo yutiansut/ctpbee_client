@@ -6,7 +6,8 @@ Uses Python 3 now
 v2.1.0 created on 5/10/19
 Improve efficiency and design
  """
-from .pylint_lib import pylint_dict_final
+from ctpbee import current_app as bee_current_app
+from app.pylint_lib import pylint_dict_final
 from flask import request, session
 import tempfile, mmap, os, re
 from datetime import datetime
@@ -18,7 +19,7 @@ from flask.views import MethodView
 from app.auth import auth_required
 from app.global_var import G
 from app.default_settings import true_response, false_response
-from app.helper import add_strategy, get_strategy
+from app.strategy_lib import add_strategy, get_strategy, delete_strategy
 
 is_linux = True
 
@@ -290,3 +291,38 @@ class CodeManage(MethodView):
             return true_response(msg='添加成功')
         else:
             return false_response(msg='添加失败:' + res)
+
+
+class StrategyView(MethodView):
+    @auth_required
+    def get(self):
+        G.session = dict(token=session['token'], data=dict(count=0, time_now=datetime.now()))
+        result = []
+        for k, v in bee_current_app.extensions.items():
+            temp = {}
+            temp['name'] = k
+            temp['status'] = "停止" if v.frozen else "运行中"
+            result.append(temp)
+        return true_response(data=result)
+
+    @auth_required
+    def put(self):
+        operation = request.values.get('operation')
+        name = request.values.get('name')
+        if name in bee_current_app.extensions:
+            if operation == "开启":
+                res = bee_current_app.enable_extension(name)
+            elif operation == "关闭":
+                res = bee_current_app.suspend_extension(name)
+            else:
+                res = 'unknown'
+            res = '成功' if res is True else '失败'
+            return true_response(msg=f'{operation} {name} {res}')
+        return false_response(msg=f"{name} not found！")
+
+    @auth_required
+    def delete(self):
+        name = request.values.get('name')
+        if delete_strategy(name):
+            return true_response(msg=f'删除{name}成功')
+        return false_response(msg=f'删除{name}失败')

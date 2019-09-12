@@ -138,7 +138,7 @@ def auth_required(view_func):
     def wrapper(self, *args, **kwargs):
         result = Auth.identify(request)
         if result['success'] and result['data']:
-            log.success("Token验证成功")
+            log.success("Token验证成功",request.path)
             return view_func(self, *args, **kwargs)
         else:
             return false_response(msg=result['msg'])
