@@ -83,6 +83,7 @@
 <script>
 import { setTimeout } from "timers";
 export default {
+  inject:['reload'],
   name: "Login",
   data() {
     return {

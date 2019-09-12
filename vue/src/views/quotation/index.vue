@@ -26,16 +26,16 @@
 
 <script>
 export default {
-  inject:['reload'],
+  inject: ["reload"],
   data() {
     return {
       quotationUrl: this.URL + "/market",
       tableData: [],
       options: [],
       value: "",
-      symbol:"",
-      symbolObj:{},
-      symbolArr:[]
+      symbol: "",
+      symbolObj: {},
+      symbolArr: []
     };
   },
   sockets: {
@@ -44,23 +44,23 @@ export default {
     },
     contract: function(res) {
       // console.log(res)
-      this.options=res
+      this.options = res;
     },
-    tick:function(res){
+    tick: function(res) {
       // console.log(res)
-      this.symbolObj[res.data.symbol]=res.data
+      this.symbolObj[res.data.symbol] = res.data;
       // console.log(this.symbolObj)
-      this.symbolArr=[]
-      for(let i in this.symbolObj){
-        this.symbolArr.push(this.symbolObj[i])
+      this.symbolArr = [];
+      for (let i in this.symbolObj) {
+        this.symbolArr.push(this.symbolObj[i]);
       }
     }
   },
   methods: {
     subscribe(symbol) {
-      if(!symbol){
-        this.tip("error","请先选择",this)
-        return
+      if (!symbol) {
+        this.tip("error", "请先选择", this);
+        return;
       }
       let token = sessionStorage.getItem("token");
       this.$axios
@@ -70,35 +70,31 @@ export default {
           }
         })
         .then(res => {
-          let returnData=res.data
-          sessionStorage.setItem('symbolName',symbol)
-          this.tip(returnData.success,returnData.msg,this)
+          let returnData = res.data;
+          sessionStorage.setItem("symbolName", symbol);
+          this.tip(returnData.success, returnData.msg, this);
+          // window.location.reload()
         })
         .catch(err => {
           console.log(err);
         });
     },
-    order(symbol){
-      sessionStorage.setItem('symbolName',symbol)
-      this.$router.push({
-        path:'/order/index',
-        query:{
-          symbol:symbol
-        }
-      })
+    order(symbol) {
+      sessionStorage.setItem("symbolName", symbol);
+      this.$router.push({ path: "/order/index" });
+      // window.location.reload()
     },
     getSymbol() {
       let token = sessionStorage.getItem("token");
       this.$axios
-        .put(this.quotationUrl, this.$qs.stringify({name:'test'}),{
+        .put(this.quotationUrl, this.$qs.stringify({ name: "test" }), {
           headers: {
             Authorization: "JWT " + token
           }
         })
         .then(res => {
-          let returnData=res.data
-
-          this.tip(returnData.success,returnData.msg,this)
+          let returnData = res.data;
+          this.tip(returnData.success, returnData.msg, this);
         })
         .catch(err => {
           console.log(err);
