@@ -3,7 +3,7 @@ from time import sleep
 from ctpbee import current_app as bee_current_app, CtpBee, del_app
 from flask import request
 from flask.views import MethodView
-from flask_socketio import leave_room, join_room
+from flask_socketio import leave_room, join_room, disconnect
 
 from app.auth import Auth, auth_required
 from app.default_settings import false_response, true_response, DefaultSettings,VLog
@@ -25,7 +25,7 @@ def identify_handle(json):
     else:
         try:
             leave_room('vip')
-            # disconnect(request.sid)
+            disconnect(request.sid)
         except Exception as e:
             print("disconnect:", e)
 

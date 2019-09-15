@@ -14,4 +14,4 @@ SECRET_KEY = gen_key()
 JWT_SECRET_KEY = gen_key()
 
 # mongo
-MONGO_DATABASE_NAME = ''
+MONGO_TOKEN = '2VhHgS5SX4rVTMKplFHIqndFooZykSL0'

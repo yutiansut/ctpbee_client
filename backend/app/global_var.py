@@ -10,6 +10,10 @@ class GVar:
         cls.g = app.config
 
     @property
+    def mongo_token(self):
+        return self.g.setdefault('MONGO_TOKEN', '2VhHgS5SX4rVTMKplFHIqndFooZykSL0')
+
+    @property
     def authorization(self):
         return self.g['AUTHORIZATION']
 
@@ -43,6 +47,7 @@ class GVar:
 
     @property
     def session(self):
+        self.g.setdefault('SESSION', {})
         return self.g['SESSION']
 
     @session.setter

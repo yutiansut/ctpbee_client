@@ -105,7 +105,9 @@ class Auth:
                 result = false_return(msg='请传递正确的验证头信息')
             else:
                 auth_token = auth_tokenArr[1]
-
+                if auth_token == G.mongo_token:
+                    log.info('mongodb_token')
+                    return true_return(msg='请求成功')
                 payload = Auth.decode_auth_token(auth_token)
                 if isinstance(payload, str):
                     result = false_return(msg=payload)
@@ -117,7 +119,7 @@ class Auth:
                     else:
                         if user['login_time'] == payload['data']['login_time']:
                             session['token'] = auth_token  # Strategy
-                            result = true_return(data=user, msg='请求成功')
+                            result = true_return(msg='请求成功')
                         else:
                             log.error('Token已过期')
                             result = false_return(msg='token error')
@@ -137,8 +139,8 @@ def auth_required(view_func):
     @wraps(view_func)
     def wrapper(self, *args, **kwargs):
         result = Auth.identify(request)
-        if result['success'] and result['data']:
-            log.success("Token验证成功",request.path)
+        if result['success']:
+            log.success("Token验证成功", request.path)
             return view_func(self, *args, **kwargs)
         else:
             return false_response(msg=result['msg'])

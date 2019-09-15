@@ -30,12 +30,14 @@ class PositionView(MethodView):
         symbol = req_info.get("symbol")
         tick = TickData(symbol=symbol, exchange=self.exchange_map[exchange])
         price = bee_current_app.recorder.get_tick(local_symbol).last_price
-
-        if direction == "long":
-            bee_current_app.action.cover(price=price, volume=volume, origin=tick)
-        if direction == "short":
-            bee_current_app.action.sell(price=price, volume=volume, origin=tick)
-        return true_response(msg="撤单成功")
+        try:
+            if direction == "long":
+                bee_current_app.action.cover(price=price, volume=volume, origin=tick)
+            if direction == "short":
+                bee_current_app.action.sell(price=price, volume=volume, origin=tick)
+            return true_response(msg="平仓请求发送成功")
+        except Exception:
+            return false_response(msg="平仓请求发送失败")
 
     @staticmethod
     def get_req(local_symbol, direction, volume: int, app) -> List:
