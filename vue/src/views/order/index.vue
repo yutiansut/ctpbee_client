@@ -6,10 +6,12 @@
           <span>日志信息</span>
           <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
         </p>
-        <el-table :data="tableData" stripe style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="logData" stripe style="width: 100%">
+          <el-table-column prop="time" label="时间" width="180px"></el-table-column>
+          <el-table-column prop="grade" label="等级"></el-table-column>
+          <el-table-column prop="APP" label="APP"></el-table-column>
+          <el-table-column prop="interface" label="接口" ></el-table-column>
+          <el-table-column prop="msg" label="信息"></el-table-column>
         </el-table>
       </div>
     </transition>
@@ -170,28 +172,7 @@ export default {
       activeOrderData: [],
       orderData: [],
       tradeData: [],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市"
-        }
-      ],
+      logData: [],
       tick_map: {
         ask_price_1: "买一价",
         ask_volume_1: "买一量",
@@ -271,6 +252,16 @@ export default {
       if (res.local_symbol === this.orderForm.local_symbol) {
         this.klineData.data.lines.push(res.data);
       }
+    },
+    log: function(res) {
+      let resArr = res.split(" ");
+      let obj = {};
+      obj.time = resArr[0]+" "+resArr[1];
+      obj.grade=resArr[2]
+      obj.APP=resArr[3]
+      obj.interface=resArr[4]+" "+resArr[5]
+      obj.msg=resArr[6]
+      this.logData.unshift(obj)
     }
   },
   filters: {
@@ -442,12 +433,9 @@ export default {
         });
     },
     initJournal() {
-      let bw = 500;
+      let bw = 580;
       let cw = document.body.clientWidth;
       this.$refs.journal.style.left = (cw - bw) / 2 + "px";
-    },
-    getJournalData(){
-      // this.$axios.get
     }
   },
   async mounted() {
@@ -535,7 +523,8 @@ export default {
     }
   }
   .journal {
-    width: 500px;
+    width: 580px;
+    max-height: 500px;
     background-color: #eee;
     border: 1px solid #ccc;
     position: fixed;
@@ -544,19 +533,6 @@ export default {
     z-index: 1001;
     padding: 10px;
     overflow: auto;
-    // &::-webkit-scrollbar {
-    //   width: 12px;
-    // }
-
-    // &::-webkit-scrollbar-track {
-    //   border-radius: 8px;
-    //   background-color: #eee;
-    // }
-
-    // &::-webkit-scrollbar-thumb {
-    //   border-radius: 8px;
-    //   background: #f6f6f6;
-    // }
 
     span {
       margin-left: 10px;
