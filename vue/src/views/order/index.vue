@@ -1,43 +1,37 @@
 <template>
   <div class="order">
     <transition enter-active-class="zoomIn" leave-active-class="zoomOut">
-      <div class="journal animated faster" v-show="journal">
+      <div class="journal animated faster" v-show="journal" v-drag ref="journal">
         <p>
           <span>日志信息</span>
           <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
         </p>
-        <el-table :data="tableData" stripe style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-table :data="logData" stripe style="width: 100%">
+          <el-table-column prop="time" label="时间" width="180px"></el-table-column>
+          <el-table-column prop="grade" label="等级"></el-table-column>
+          <el-table-column prop="APP" label="APP"></el-table-column>
+          <el-table-column prop="interface" label="接口" ></el-table-column>
+          <el-table-column prop="msg" label="信息"></el-table-column>
         </el-table>
       </div>
     </transition>
 
-    <el-button type="warning" icon="el-icon-star-off" circle class="journalIcon" @click="journal = !journal"></el-button>
+    <el-button
+      type="warning"
+      icon="el-icon-star-off"
+      circle
+      class="journalIcon"
+      @click="journal = !journal"
+    ></el-button>
 
     <el-row :gutter="10">
       <el-col :span="18" :xs="24">
         <el-card class="box-card" id="kline">
           <div ref="klineBox" style="overflow:auto" id="klineBox">
-            <React-kline v-if="klineFlag"></React-kline>
+            <Vue-Kline ref="kline" :klineParams="klineParams" :klineData="klineData"></Vue-Kline>
           </div>
         </el-card>
-      </el-col>
-      <el-col :span="6" :xs="24">
-        <el-card class="box-card">
-          <table class="tickTab">
-            <tr v-for="(val,key,index) in tickTabData" :key="index">
-              <td>{{key|chinese}}</td>
-              <td>{{val}}</td>
-            </tr>
-          </table>
-        </el-card>
-      </el-col>
-    </el-row>
-    <br />
-    <el-row :gutter="10">
-      <el-col :span="18" :xs="24">
+        <br />
         <el-card class="box-card">
           <el-tabs tab-position="top">
             <el-tab-pane label="持仓数据">
@@ -103,6 +97,15 @@
         </el-card>
       </el-col>
       <el-col :span="6" :xs="24">
+        <el-card class="box-card" style="height:370px">
+          <table class="tickTab">
+            <tr v-for="(val,key,index) in tickTabData" :key="index">
+              <td>{{key|chinese}}</td>
+              <td>{{val}}</td>
+            </tr>
+          </table>
+        </el-card>
+        <br />
         <el-card class="box-card">
           <el-form label-position="right" label-width="40px" :model="orderForm">
             <el-form-item label="合约">
@@ -136,38 +139,17 @@
 </template>
 
 <script>
-import ReactKline from "./kline";
+import VueKline from "vue-kline";
 import elementResizeDetectorMaker from "element-resize-detector";
-const App = {
-  render() {
-    return (
-      <ReactKline
-        width={600}
-        height={400}
-        ranges={["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"]}
-        symbol={"BTC"}
-        symbolName={"BTC/USD"}
-        intervalTime={5000}
-        depthWidth={50}
-        onRequestData={this.onRequestData}
-      />
-    );
-  },
-  methods: {
-    onRequestData(param, callback) {
-      let data = "";
-      callback(data);
-    }
-  }
-};
 export default {
+  inject: ["reload"],
   data() {
     return {
       orderUrl: this.URL + "/order_solve",
+      klineUrl: this.URL + "/bar",
       positionUrl: this.URL + "/close_position",
       journal: false,
       token: "",
-      klineFlag: false,
       klineBoxWidth: "",
       orderForm: {
         local_symbol: "",
@@ -190,28 +172,7 @@ export default {
       activeOrderData: [],
       orderData: [],
       tradeData: [],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市"
-        }
-      ],
+      logData: [],
       tick_map: {
         ask_price_1: "买一价",
         ask_volume_1: "买一量",
@@ -224,11 +185,30 @@ export default {
         pre_close: "昨日收盘价",
         volume: "成交量",
         datetime: "时间"
+      },
+      //k线配置
+      klineParams: {
+        width: 800,
+        height: 550,
+        theme: "light",
+        language: "zh-cn",
+        ranges: ["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"],
+        symbol: "BTC",
+        symbolName: "BTC/USD",
+        intervalTime: 1000,
+        depthWidth: 50
+      },
+      //k线数据
+      klineData: {
+        success: true,
+        data: {
+          lines: []
+        }
       }
     };
   },
   components: {
-    ReactKline
+    VueKline
   },
   watch: {
     volume(newVolume, oldVolume) {
@@ -266,6 +246,22 @@ export default {
     },
     order: function(res) {
       this.orderData = res.data;
+    },
+    //socket推送k线数据
+    bar: function(res) {
+      if (res.local_symbol === this.orderForm.local_symbol) {
+        this.klineData.data.lines.push(res.data);
+      }
+    },
+    log: function(res) {
+      let resArr = res.split(" ");
+      let obj = {};
+      obj.time = resArr[0]+" "+resArr[1];
+      obj.grade=resArr[2]
+      obj.APP=resArr[3]
+      obj.interface=resArr[4]+" "+resArr[5]
+      obj.msg=resArr[6]
+      this.logData.unshift(obj)
     }
   },
   filters: {
@@ -287,6 +283,9 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+      done();
+    },
     getTabData() {
       this.$axios
         .get(this.orderUrl, {
@@ -380,20 +379,69 @@ export default {
           console.log(err);
         });
     },
-    getWidth() {
-      // console.log(this.$refs.klineBox.offsetWidth);
+    initKline() {
+      // this.$refs.kline.redraw()
       this.klineBoxWidth = this.$refs.klineBox.offsetWidth;
-      this.$store.commit("setWidth", this.$refs.klineBox.offsetWidth);
-      // console.log(this.$store.state.width);
-      this.klineFlag = true;
+      //更新数据
+      this.$refs.kline.kline.data.lines = this.klineData.data.lines;
+      //设置k线容器宽度
+      this.$refs.kline.resize(this.klineBoxWidth, 550);
+      //设置k线symbol
+      this.$refs.kline.setSymbol(
+        this.orderForm.local_symbol,
+        this.orderForm.local_symbol
+      );
+      //设置主题
+      this.$refs.kline.setTheme("light");
     },
-    handleClose(done) {
-      done();
+    watchWidth() {
+      var that = this;
+      elementResizeDetectorMaker().listenTo(
+        document.getElementById("klineBox"),
+        function(element) {
+          var width = element.offsetWidth;
+          that.klineParams.width = width;
+          try {
+            that.$refs.kline.resize(width, 550);
+          } catch (err) {
+            // console.log(err)
+          }
+        }
+      );
+    },
+    getKlineData() {
+      this.$axios
+        .post(
+          this.klineUrl,
+          this.$qs.stringify({ local_symbol: this.orderForm.local_symbol }),
+          {
+            headers: {
+              Authorization: "JWT " + this.token
+            }
+          }
+        )
+        .then(res => {
+          let returnData = res.data;
+          if (returnData.success === true) {
+            this.klineData.data.lines = returnData.data;
+          } else {
+            this.tip(returnData.success, returnData.msg, this);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    initJournal() {
+      let bw = 580;
+      let cw = document.body.clientWidth;
+      this.$refs.journal.style.left = (cw - bw) / 2 + "px";
     }
   },
-  mounted() {
-    let symbolName = sessionStorage.getItem("symbolName");
-    if (!symbolName) {
+  async mounted() {
+    this.orderForm.local_symbol = sessionStorage.getItem("symbolName");
+    this.token = sessionStorage.getItem("token");
+    if (!this.orderForm.local_symbol) {
       return this.$alert("请先订阅行情！", "友情提示", {
         confirmButtonText: "确定",
         callback: action => {
@@ -403,24 +451,34 @@ export default {
         }
       });
     }
-    if (this.$route.query.symbol) {
-      this.orderForm.local_symbol = this.$route.query.symbol;
-    } else {
-      this.orderForm.local_symbol = sessionStorage.getItem("symbolName");
-    }
-    this.token = sessionStorage.getItem("token");
-    this.getTabData();
-    this.getWidth();
 
-    var that = this;
-    elementResizeDetectorMaker().listenTo(
-      document.getElementById("klineBox"),
-      function(element) {
-        var width = element.offsetWidth;
-        var height = element.offsetHeight;
-        that.$store.commit("setWidth", width);
+    this.getTabData();
+    // this.getKlineData();
+    //请求k线数据
+    try {
+      let returnData = await this.$axios.post(
+        this.URL + "/bar",
+        this.$qs.stringify({ local_symbol: this.orderForm.local_symbol }),
+        {
+          headers: {
+            Authorization: "JWT " + this.token
+          }
+        }
+      );
+      if (returnData.data.success === true) {
+        this.klineData.data.lines = returnData.data.data;
+      } else {
+        this.tip(returnData.data.success, returnData.data.msg, this);
       }
-    );
+    } catch (err) {
+      console.log(err);
+    }
+
+    this.initKline();
+
+    this.watchWidth();
+
+    this.initJournal();
   }
 };
 </script>
@@ -460,22 +518,22 @@ export default {
     .chart_container {
       border: 1px solid #eee;
     }
-    #sizeIcon{
+    #sizeIcon {
       display: none;
     }
   }
   .journal {
-    width: 50%;
-    // height: 50px;
+    width: 580px;
+    max-height: 500px;
     background-color: #eee;
     border: 1px solid #ccc;
     position: fixed;
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
     border-radius: 10px;
-    z-index: 999;
+    z-index: 1001;
     padding: 10px;
+    overflow: auto;
+
     span {
       margin-left: 10px;
     }
@@ -488,9 +546,9 @@ export default {
   }
   .journalIcon {
     position: fixed;
-    top:60px;
+    top: 60px;
     right: 5px;
-    z-index: 999;
+    z-index: 1002;
   }
 }
 </style>
