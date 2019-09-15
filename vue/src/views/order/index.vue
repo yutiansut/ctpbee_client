@@ -1,7 +1,7 @@
 <template>
   <div class="order">
     <transition enter-active-class="zoomIn" leave-active-class="zoomOut">
-      <div class="journal animated faster" v-show="journal">
+      <div class="journal animated faster" v-show="journal" v-drag ref="journal">
         <p>
           <span>日志信息</span>
           <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
@@ -392,7 +392,7 @@ export default {
       // this.$refs.kline.redraw()
       this.klineBoxWidth = this.$refs.klineBox.offsetWidth;
       //更新数据
-      this.$refs.kline.kline.data.lines=this.klineData.data.lines
+      this.$refs.kline.kline.data.lines = this.klineData.data.lines;
       //设置k线容器宽度
       this.$refs.kline.resize(this.klineBoxWidth, 550);
       //设置k线symbol
@@ -440,9 +440,17 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    initJournal() {
+      let bw = 500;
+      let cw = document.body.clientWidth;
+      this.$refs.journal.style.left = (cw - bw) / 2 + "px";
+    },
+    getJournalData(){
+      // this.$axios.get
     }
   },
- async mounted() {
+  async mounted() {
     this.orderForm.local_symbol = sessionStorage.getItem("symbolName");
     this.token = sessionStorage.getItem("token");
     if (!this.orderForm.local_symbol) {
@@ -481,6 +489,8 @@ export default {
     this.initKline();
 
     this.watchWidth();
+
+    this.initJournal();
   }
 };
 </script>
@@ -525,17 +535,29 @@ export default {
     }
   }
   .journal {
-    width: 50%;
-    // height: 50px;
+    width: 500px;
     background-color: #eee;
     border: 1px solid #ccc;
     position: fixed;
     top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
     border-radius: 10px;
-    z-index: 999;
+    z-index: 1001;
     padding: 10px;
+    overflow: auto;
+    // &::-webkit-scrollbar {
+    //   width: 12px;
+    // }
+
+    // &::-webkit-scrollbar-track {
+    //   border-radius: 8px;
+    //   background-color: #eee;
+    // }
+
+    // &::-webkit-scrollbar-thumb {
+    //   border-radius: 8px;
+    //   background: #f6f6f6;
+    // }
+
     span {
       margin-left: 10px;
     }
@@ -550,7 +572,7 @@ export default {
     position: fixed;
     top: 60px;
     right: 5px;
-    z-index: 999;
+    z-index: 1002;
   }
 }
 </style>
