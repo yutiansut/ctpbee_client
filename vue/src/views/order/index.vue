@@ -1,17 +1,40 @@
 <template>
   <div class="order">
     <transition enter-active-class="zoomIn" leave-active-class="zoomOut">
-      <div class="journal animated faster" v-show="journal" v-drag ref="journal">
+      <div class="journal animated faster" v-show="journal" v-drag ref="journal" id="journal">
         <p>
           <span>日志信息</span>
           <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
         </p>
-        <el-table :data="logData" stripe style="width: 100%">
-          <el-table-column prop="time" label="时间" width="180px"></el-table-column>
-          <el-table-column prop="grade" label="等级"></el-table-column>
-          <el-table-column prop="APP" label="APP"></el-table-column>
-          <el-table-column prop="interface" label="接口" ></el-table-column>
-          <el-table-column prop="msg" label="信息"></el-table-column>
+        <el-table :data="logData" stripe id="logTab">
+          <el-table-column prop="time" label="时间" width="180px">
+            <template scope="scope">
+              <span style="color:red">{{ scope.row.time }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="grade" label="等级">
+            <template scope="scope">
+              <span style="color:#EF6FE9">{{ scope.row.grade }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="APP" label="APP">
+            <template scope="scope">
+              <span style="color:#000000">{{scope.row.APP}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="interface" label="接口">
+            <template scope="scope">
+              <span style="color:#30CCCC">{{scope.row.interface}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="msg" label="信息">
+            <template scope="scope">
+              <span v-if="scope.row.grade==='INFO'" style="color:#67C23A">{{scope.row.msg}}</span>
+              <span v-if="scope.row.grade==='ERROR'" style="color:red">{{scope.row.msg}}</span>
+              <span v-if="scope.row.grade==='DEBUG'" style="color:#EF6FE9">{{scope.row.msg}}</span>
+              <span v-if="scope.row.grade==='WARNING'" style="color:#89C800">{{scope.row.msg}}</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </transition>
@@ -97,7 +120,7 @@
         </el-card>
       </el-col>
       <el-col :span="6" :xs="24">
-        <el-card class="box-card" style="height:370px">
+        <el-card class="box-card" style="height:340px">
           <table class="tickTab">
             <tr v-for="(val,key,index) in tickTabData" :key="index">
               <td>{{key|chinese}}</td>
@@ -218,9 +241,11 @@ export default {
     }
   },
   sockets: {
+    //监听socket连接
     connect: function() {
       console.log("下单已连接");
     },
+    //推送当前所选合约的行情数据
     tick: function(res) {
       // console.log(res)
       let data = res.data;
@@ -235,15 +260,19 @@ export default {
         }
       }
     },
+    //推送持仓数据
     position: function(res) {
       this.positionData = res.data;
     },
+    //推送待成交数据
     active_order: function(res) {
       this.activeOrderData = res.data;
     },
+    //推送成交数据
     trade: function(res) {
       this.tradeData = res.data;
     },
+    //推送发单数据
     order: function(res) {
       this.orderData = res.data;
     },
@@ -253,15 +282,19 @@ export default {
         this.klineData.data.lines.push(res.data);
       }
     },
+    //推送日志数据
     log: function(res) {
+      if (this.logData.length >= 49) {
+        this.logData = this.logData.slice(0, 49);
+      }
       let resArr = res.split(" ");
       let obj = {};
-      obj.time = resArr[0]+" "+resArr[1];
-      obj.grade=resArr[2]
-      obj.APP=resArr[3]
-      obj.interface=resArr[4]+" "+resArr[5]
-      obj.msg=resArr[6]
-      this.logData.unshift(obj)
+      obj.time = resArr[0] + " " + resArr[1];
+      obj.grade = resArr[2];
+      obj.APP = resArr[3];
+      obj.interface = resArr[4] + " " + resArr[5];
+      obj.msg = resArr[6];
+      this.logData.unshift(obj);
     }
   },
   filters: {
@@ -283,9 +316,7 @@ export default {
     }
   },
   methods: {
-    handleClose(done) {
-      done();
-    },
+    //获取持仓，待成交，发单，成交数据
     getTabData() {
       this.$axios
         .get(this.orderUrl, {
@@ -296,16 +327,19 @@ export default {
         .then(res => {
           let returnData = res.data;
           if (returnData.success == true) {
+            console.log(returnData);
             this.orderData = returnData.data.order_list;
             this.positionData = returnData.data.position_list;
             this.activeOrderData = returnData.data.active_order_list;
             this.tradeData = returnData.data.trade_list;
+            this.logData = this.forEachLog(returnData.data.log_history);
           }
         })
         .catch(err => {
           console.log(err);
         });
     },
+    //交易（买多。卖空）
     business(data, transactionType) {
       if (data.price === "") {
         return this.$message({
@@ -333,6 +367,7 @@ export default {
           console.log(err);
         });
     },
+    //撤单
     cancelOrder(val) {
       console.log(val);
       this.$axios
@@ -355,6 +390,7 @@ export default {
           console.log(err);
         });
     },
+    //平仓
     positionClose(val) {
       // exchange local_symbol symbol volume
       let sendData = {
@@ -379,6 +415,7 @@ export default {
           console.log(err);
         });
     },
+    //初始化K线
     initKline() {
       // this.$refs.kline.redraw()
       this.klineBoxWidth = this.$refs.klineBox.offsetWidth;
@@ -394,6 +431,7 @@ export default {
       //设置主题
       this.$refs.kline.setTheme("light");
     },
+    //监听K线盒子大小，以达到自适应的效果
     watchWidth() {
       var that = this;
       elementResizeDetectorMaker().listenTo(
@@ -408,7 +446,15 @@ export default {
           }
         }
       );
+      elementResizeDetectorMaker().listenTo(
+        document.getElementById("journal"),
+        function(element) {
+          var height = element.offsetHeight;
+          document.getElementById("logTab").style.height = height - 70 + "px";
+        }
+      );
     },
+    //获取K线数据
     getKlineData() {
       this.$axios
         .post(
@@ -432,10 +478,28 @@ export default {
           console.log(err);
         });
     },
+    //初始化日志
     initJournal() {
+      //因日志盒子是隐藏的，无法获取其宽，故暂时先写个固定值
       let bw = 580;
       let cw = document.body.clientWidth;
       this.$refs.journal.style.left = (cw - bw) / 2 + "px";
+    },
+    //获取历史日志信息
+    forEachLog(arr) {
+      let logArr = [];
+      arr = arr.length >= 50 ? arr.slice(arr.length - 50) : arr;
+      for (let i in arr) {
+        let resArr = arr[i].split(" ");
+        let obj = {};
+        obj.time = resArr[0] + " " + resArr[1];
+        obj.grade = resArr[2];
+        obj.APP = resArr[3];
+        obj.interface = resArr[4] + " " + resArr[5];
+        obj.msg = resArr[6];
+        logArr.unshift(obj);
+      }
+      return logArr;
     }
   },
   async mounted() {
@@ -451,7 +515,6 @@ export default {
         }
       });
     }
-
     this.getTabData();
     // this.getKlineData();
     //请求k线数据
@@ -509,6 +572,9 @@ export default {
       padding-left: 10px;
       color: #606266;
       font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
   #kline {
@@ -524,7 +590,9 @@ export default {
   }
   .journal {
     width: 580px;
-    max-height: 500px;
+    // min-width: 500px;
+    height: 400px;
+    box-sizing: border-box;
     background-color: #eee;
     border: 1px solid #ccc;
     position: fixed;
@@ -532,8 +600,7 @@ export default {
     border-radius: 10px;
     z-index: 1001;
     padding: 10px;
-    overflow: auto;
-
+    overflow: hidden;
     span {
       margin-left: 10px;
     }
@@ -542,6 +609,43 @@ export default {
       margin-right: 10px;
       font-size: 20px;
       cursor: pointer;
+    }
+    .el-table {
+      // width: 100%;
+      overflow: auto;
+      /* 滚动条 */
+      &::-webkit-scrollbar-thumb:horizontal {
+        /*水平滚动条的样式*/
+        width: 4px;
+        background-color: #ccc;
+        border-radius: 10px;
+      }
+      &::-webkit-scrollbar-track-piece {
+        background-color: #fff; /*滚动条的背景颜色*/
+        border-radius: 0; /*滚动条的圆角宽度*/
+      }
+      &::-webkit-scrollbar {
+        width: 10px; /*滚动条的宽度*/
+        height: 8px; /*滚动条的高度*/
+      }
+      &::-webkit-scrollbar-thumb:vertical {
+        /*垂直滚动条的样式*/
+        height: 50px;
+        background-color: #ccc;
+        border-radius: 10px;
+        outline: 2px solid #fff;
+        outline-offset: -2px;
+        border: 2px solid #fff;
+      }
+      &::-webkit-scrollbar-thumb:hover {
+        /*滚动条的hover样式*/
+        height: 50px;
+        background-color: #9f9f9f;
+        border-radius: 10px;
+      }
+      span {
+        margin: 0;
+      }
     }
   }
   .journalIcon {

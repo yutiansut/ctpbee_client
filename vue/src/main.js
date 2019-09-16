@@ -106,13 +106,17 @@ Vue.directive('drag', {
       // 算出鼠标相对元素的位置
       let disX = e.clientX - div.offsetLeft
       let disY = e.clientY - div.offsetTop
+      //盒子高宽
       let divW = div.offsetWidth
       let divH = div.offsetHeight
+      //可视区域宽高
       let clientH = document.body.clientHeight
       let clientW = document.body.clientWidth
+      //距离左边最大距离
       let divL = clientW - divW
+      //距离顶部最大距离
       let divT = clientH - divH
-
+      //拉伸时记录鼠标的当前位置
       let oldX = e.clientX;
       let oldY = e.clientY;
 
@@ -127,11 +131,13 @@ Vue.directive('drag', {
           div.style.top = top + 'px';
         } else {
           if (disX <= 10) { //当鼠标向左拖动时
-            div.style.left = div.offsetLeft + (e.clientX - oldX) +
-              'px'; //元素当前的left值（此时ev.clientX - oldX为负值）
-            div.style.width = div.offsetWidth - (e.clientX - oldX) + 'px'; //元素当前的宽度
+            // 元素当前的left值（此时ev.clientX - oldX为负值）
+            div.style.left = div.offsetLeft + (e.clientX - oldX) + 'px';
+            // 元素当前的宽度
+            div.style.width = div.offsetWidth - (e.clientX - oldX) + 'px';
           } else if (disX >= (div.offsetWidth - 10)) { //当鼠标向右拖动时
             div.style.width = div.offsetWidth + (e.clientX - oldX) + 'px';
+            //由于向右拉伸，盒子增大，鼠标的相对位置也发生改变，故此时需重新获取该值
             disX = e.clientX - div.offsetLeft;
           }
           if (disY <= 10) { //当鼠标向上拖动时（此时ev.clientX - oldX为负值）
@@ -139,8 +145,10 @@ Vue.directive('drag', {
             div.style.height = div.offsetHeight - (e.clientY - oldY) + 'px';
           } else if (disY >= (div.offsetHeight - 10)) { //当鼠标向下拖动时
             div.style.height = div.offsetHeight + (e.clientY - oldY) + 'px';
+            //由于向下拉伸，盒子增大，鼠标的相对位置也发生改变，故此时需重新获取该值
             disY = e.clientY - div.offsetTop;
           }
+          //拉伸完毕之后，由于盒子经过了缩放，边界位置改变，故此时重新获取鼠标位置
           oldX = e.clientX;
           oldY = e.clientY;
         }
