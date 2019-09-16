@@ -205,6 +205,9 @@ $width: 400px;
 }
 </style>
 <style lang="scss">
+body{
+  min-height: 625px;
+}
 $width: 400px;
 .login {
   .el-tabs__item {
