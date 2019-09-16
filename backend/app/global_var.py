@@ -39,6 +39,7 @@ class GVar:
 
     @property
     def current_user(self):
+        self.g.setdefault('CURRENT_USER', {})
         return self.g['CURRENT_USER']
 
     @current_user.setter
@@ -70,6 +71,11 @@ class GVar:
         else:
             self.g['SESSION'] = {}
             self.g['SESSION'][token] = info
+
+    @property
+    def log_history(self):
+        self.g.setdefault('LOG_HISTORY', [])
+        return self.g['LOG_HISTORY']
 
 
 G = GVar()

@@ -6,7 +6,7 @@ from flask.views import MethodView
 from flask_socketio import leave_room, join_room, disconnect
 
 from app.auth import Auth, auth_required
-from app.default_settings import false_response, true_response, DefaultSettings,VLog
+from app.default_settings import false_response, true_response, DefaultSettings, VLog
 from app.ext import io
 from app.global_var import G
 from app.strategy_lib import load_strategy
@@ -53,7 +53,7 @@ class LoginView(MethodView):
             return false_response(msg='Refuse!')
 
         else:  # bee_current_app 不不存在
-            bee_app = CtpBee(name=info.get("username"), import_name=__name__, refresh=True,logger_class=VLog)
+            bee_app = CtpBee(name=info.get("username"), import_name=__name__, refresh=True, logger_class=VLog)
             login_info = {
                 "CONNECT_INFO": info,
                 "INTERFACE": info.get('interface'),

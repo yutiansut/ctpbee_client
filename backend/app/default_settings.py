@@ -1,8 +1,4 @@
 import json
-import os
-import time
-from json import JSONDecodeError
-from datetime import datetime
 from flask import make_response
 from flask_socketio import SocketIO
 
@@ -11,6 +7,7 @@ from ctpbee.constant import LogData, AccountData, ContractData, BarData, OrderDa
     TradeData
 from app.model import db
 from app.ext import io
+from app.global_var import G
 
 
 class DefaultSettings(CtpbeeApi):
@@ -23,13 +20,6 @@ class DefaultSettings(CtpbeeApi):
 
         ## 记录每个合约是否载入状态
         self.local_status = {}
-
-    def on_log(self, log: LogData):
-        data = {
-            "type": "log",
-            "data": log
-        }
-        self.io.emit('log', data)
 
     def on_account(self, account: AccountData) -> None:
         data_list = []
@@ -84,9 +74,6 @@ class DefaultSettings(CtpbeeApi):
         self.io.emit("position", data)
 
     def on_tick(self, tick: TickData) -> None:
-        self.local_status.setdefault(tick.local_symbol, False)
-        self.global_bar.setdefault(tick.local_symbol, [])
-
         tick.datetime = str(tick.datetime)
         data = {
             "type": "tick",
@@ -98,49 +85,6 @@ class DefaultSettings(CtpbeeApi):
             "data": self.app.recorder.get_all_positions()
         }
         self.io.emit("position", data)
-        if not self.local_status.get(tick.local_symbol):
-            try:
-                with open(f"{os.path.dirname(__file__)}/static/json/{tick.symbol}.json", "r") as f:
-                    from json import load
-                    st = True
-                    try:
-                        data = load(f)
-                    except JSONDecodeError:
-                        st = False
-                    if data.get("data") is not None and st:
-                        klines = data.get("data").get("lines")
-                        assert type(klines) == list
-                        if len(klines) != 0:
-                            self.global_bar.get(tick.local_symbol).extend(klines)
-            except FileNotFoundError:
-                pass
-            self.local_status[tick.local_symbol] = True
-        with open(f"{os.path.dirname(__file__)}/static/json/{tick.symbol}.json", "w") as f:
-            from json import dump
-            update_result = {
-                "success": True,
-                "data": {
-                    "lines": self.global_bar.get(tick.local_symbol),
-                    "depths": {
-                        "asks": [
-                            [
-                                tick.ask_price_1,
-                                tick.ask_volume_1
-                            ]
-                        ],
-                        "bids": [
-                            [
-                                tick.bid_price_1,
-                                tick.bid_volume_1
-                            ]
-                        ]
-                    }
-                }
-            }
-            f.truncate(0)
-            dump(update_result, f)
-
-        self.io.emit("update_all", update_result)
 
     def on_shared(self, shared: SharedData) -> None:
         shared.datetime = str(shared.datetime)
@@ -166,6 +110,7 @@ class DefaultSettings(CtpbeeApi):
 
 class VLog(VLogger):
     def handler_record(self, record):
+        G.log_history.append(record)
         io.emit('log', record)
 
 

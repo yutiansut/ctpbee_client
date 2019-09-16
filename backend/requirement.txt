@@ -3,7 +3,7 @@ blinker==1.4
 certifi==2019.6.16
 chardet==3.0.4
 Click==7.0
-colour-printing==0.1.8
+colour-printing==0.2.4
 ctpbee==0.30.2
 dataclasses==0.6
 Flask==1.1.1

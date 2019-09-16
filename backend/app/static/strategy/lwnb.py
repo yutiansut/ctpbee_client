@@ -45,10 +45,10 @@ class StrategyClass(CtpbeeApi):
 
     def on_log(self, log: LogData):
         """ 可以用于将log信息推送到外部 """
-        pass
+        print(log)
 	
     def on_realtime(self, cur):
-	    self.info("lw最帅")
+	    self.info("lwnb")
 	
 ext = StrategyClass('lwnb')
 

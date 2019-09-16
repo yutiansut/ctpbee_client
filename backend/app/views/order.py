@@ -5,6 +5,7 @@ from flask.views import MethodView
 from ctpbee import current_app as bee_current_app, helper
 from app.default_settings import true_response, false_response
 from app.auth import auth_required
+from app.global_var import G
 
 
 class OpenOrderView(MethodView):
@@ -16,7 +17,7 @@ class OpenOrderView(MethodView):
         trade_list = [trade._to_dict() for trade in bee_current_app.recorder.get_all_trades()]
         order_list = [order._to_dict() for order in bee_current_app.recorder.get_all_orders()]
         result = dict(position_list=position_list, active_order_list=active_order_list, trade_list=trade_list,
-                      order_list=order_list)
+                      order_list=order_list, log_history=G.log_history)
         return true_response(data=result)
 
     @auth_required
