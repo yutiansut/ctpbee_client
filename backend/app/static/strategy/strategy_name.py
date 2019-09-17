@@ -7,20 +7,15 @@ from ctpbee.constant import LogData, AccountData, PositionData
 class StrategyClass(CtpbeeApi):
     def __init__(self, name, app=None):
         super().__init__(name, app)
-        self.instrument_set = {"ag1910.SHFE"}
-        self.init_flag = False
-        self.converter = None
 
     def on_trade(self, trade):
         pass
 
-    def on_realtime(self, timed: datetime):
-        pass
+    def on_realtime(self):
+        self.debug("222")
 
     def on_contract(self, contract):
-        # 订阅所有
-        if contract.local_symbol in self.instrument_set:
-            self.app.subscribe(contract.symbol)
+        pass
 
     def on_order(self, order):
         pass
@@ -33,9 +28,7 @@ class StrategyClass(CtpbeeApi):
         # print(self.converter.account_df)
 
     def on_init(self, init):
-        self.init_flag = True
-
-        print("初始化完成")
+        pass
 
     def on_tick(self, tick):
         """tick process function"""
@@ -43,13 +36,6 @@ class StrategyClass(CtpbeeApi):
     def on_bar(self, bar):
         """bar process function"""
 
-    def on_log(self, log: LogData):
-        """ 可以用于将log信息推送到外部 """
-        print(log)
-	
-    def on_realtime(self, cur):
-	    self.info("lwnb")
-	
-ext = StrategyClass('lwnb')
+ext = StrategyClass('strategy_name')
 
 

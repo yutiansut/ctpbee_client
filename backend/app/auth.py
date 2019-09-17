@@ -5,7 +5,7 @@ import jwt
 from flask import request, session
 
 from app.setting import JWT_SECRET_KEY
-from colour_printing import log
+from colour_printing.default import log
 from app.global_var import G
 from app.default_settings import true_return, false_return, false_response, true_response
 

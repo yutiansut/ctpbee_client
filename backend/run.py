@@ -5,6 +5,8 @@ from app import app
 # os.system("killall -9 gunicorn")
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
+app = app
+
 
 if __name__ == '__main__':
     ## production
@@ -13,5 +15,5 @@ if __name__ == '__main__':
 
     ## development  --> 你应该在此模式下卸载eventlet包
     app.run(host='0.0.0.0')
-    # 生产环境可以注释
+    # 生产环s境可以注释
     # webbrowser.open("http://127.0.0.1:5000/login")
