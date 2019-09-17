@@ -1,17 +1,18 @@
 # ctpbee_client  
 > 基于ctpbee界面端的后台服务
-
-## 快速部署
 ```
 # 安装依赖
 pip install -r requriment.txt
-
 ```
+
+## ~~快速部署~~ (单账户支持不需要)
+
+--- 
 根据实际部署情况修改 uwsig.ini
 ```
 # supervisor
 sudo apt install supervisor
-cd /etc/supervisor/conf.d/ && sudo vim ctpbee_client_supervisor.conf
+cd /etc/supervisor/conf.d/ && sudo vim supervisor.conf
 ```
 supervisor.conf
 ```
@@ -29,12 +30,12 @@ autorestart=true
 #日志地址
 stdout_logfile=/home/faith/GIT/ctpbee_client/backend/uwsgi_supervisor.log    
 ```
-根据实际部署情况修改 nginx.conf
 ```
 # nginx
 sudo apt install nginx
 cd /etc/nginx && sudo vim nginx.conf
 ```
+根据实际部署情况修改 nginx.conf
 ```
 ## nginx.conf
 http
@@ -65,3 +66,15 @@ sudo service nginx restart
 如果表达的不清楚->[传送门](https://www.cnblogs.com/Ray-liang/p/4173923.html)
 
 ---
+
+## 功能支持
+ - [x] 单账户
+ - [x] 行情
+ - [x] K线图
+ - [x] 交易
+ - [x] 在线添加策略
+ - [ ] 回测
+ 
+## 代码部分     
+
+基于ctpbee API支持
