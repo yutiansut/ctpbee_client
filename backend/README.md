@@ -33,13 +33,17 @@ stdout_logfile=/home/faith/GIT/ctpbee_client/backend/uwsgi_supervisor.log
 ```
 # nginx
 sudo apt install nginx
-cd /etc/nginx/sites-available && sudo mv default default_bak
-sudo vim default
+cd /etc/nginx && sudo vim nginx.conf
 ```
-default
 ```
+## nginx.conf
+http
+{   ##
+	# Basic Settings
+	##
+# 写入
 server {
-  listen  5000;
+  listen  80;
   server_name 10.40.25.15; #公网地址
 
   location / {
@@ -49,6 +53,8 @@ server {
     uwsgi_param UWSGI_CHDIR  /home/faith/GIT/ctpbee_client/backend; # 指向网站根目录
     uwsgi_param UWSGI_SCRIPT run:app; # 指定启动程序
   }
+}
+## 写入
 }
 ```
 启动
