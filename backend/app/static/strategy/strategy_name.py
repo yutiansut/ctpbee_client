@@ -12,7 +12,7 @@ class StrategyClass(CtpbeeApi):
         pass
 
     def on_realtime(self):
-        self.debug("222")
+        pass
 
     def on_contract(self, contract):
         pass

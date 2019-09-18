@@ -33,6 +33,7 @@ class GVar:
     def authorization(self, code: str):
         from werkzeug.security import generate_password_hash
         au = generate_password_hash(code)
+        print(au)
         self.g['AUTHORIZATION'] = au
         with open(self.authorization_path, 'w') as f:
             f.write(au)

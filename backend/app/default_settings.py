@@ -110,7 +110,6 @@ class DefaultSettings(CtpbeeApi):
 
 class VLog(VLogger):
     def handler_record(self, record):
-        print(record)
         G.log_history.append(record)
         io.emit('log', record)
 

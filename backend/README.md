@@ -1,11 +1,13 @@
-# ctpbee_client  
+# ctpbee_client
+  
+---
 > 基于ctpbee界面端的后台服务
 ```
 # 安装依赖
 pip install -r requriment.txt
 ```
 
-## ~~快速部署~~ (单账户支持不需要)
+## ~~快速部署~~ (现仅支持单账户，不需要)
 
 --- 
 根据实际部署情况修改 uwsig.ini
@@ -68,6 +70,8 @@ sudo service nginx restart
 ---
 
 ## 功能支持
+
+---
  - [x] 单账户
  - [x] 行情
  - [x] K线图
@@ -75,6 +79,41 @@ sudo service nginx restart
  - [x] 在线添加策略
  - [ ] 回测
  
-## 代码部分     
-
+## 代码部分
+     
+---
 基于ctpbee API支持
+- 视图部分 views
+  - bar：K线api
+  - login：账户登录api
+  - config：配置api
+  - market：行情api 
+    - 订阅
+  - order：交易api
+    - 下单
+    - 撤单
+  - position：持仓api
+    - 平仓
+  - strategy：策略api
+    - 管理策略
+    - 添加
+    - 删除
+    - 更新
+- 认证机制
+  - 基于JWT Token认证
+  - 基于flask-socket 数据推送服务
+    - 连接验证 ->Token
+    - 使用room区别连接,划分推送区域
+- global_var.py
+  - 由于配置以及一些参数的需要,基于flask.current_app.config加了一层封装
+    - G
+
+## 凑凑字数
+
+---
+由于ctpbee是轻量化框架,所以各位大佬如果看过ctpbee文档教程,对client的Views部分应该不陌生,此client只暴露接口,一些逻辑代码也加有注释,
+欢迎提出疑问或有更好的改进.毕竟本人一直在写Bug.    墙|ω･｀)  
+
+
+---
+- (ง •_•)ง

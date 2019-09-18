@@ -81,7 +81,7 @@ class LogoutView(MethodView):
     @auth_required
     def post(self):
         auth_code = request.values.get('authorization', "")
-        if auth_code and len(auth_code) > 6 and G.check_authorization(auth_code):
+        if auth_code and len(auth_code) >= 6 and G.check_authorization(auth_code):
             del_app(__name__)
             G.current_user.clear()
             print("bee_app： ", bee_current_app)
