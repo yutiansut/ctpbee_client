@@ -71,17 +71,16 @@ sudo service nginx restart
 
 ## 功能支持
 
----
  - [x] 单账户
  - [x] 行情
  - [x] K线图
  - [x] 交易
  - [x] 在线添加策略
  - [ ] 回测
+ ---
  
 ## 代码部分
      
----
 基于ctpbee API支持
 - 视图部分 views
   - bar：K线api
@@ -107,13 +106,14 @@ sudo service nginx restart
 - global_var.py
   - 由于配置以及一些参数的需要,基于flask.current_app.config加了一层封装
     - G
+---
 
 ## 凑凑字数
 
----
 由于ctpbee是轻量化框架,所以各位大佬如果看过ctpbee文档教程,对client的Views部分应该不陌生,此client只暴露接口,一些逻辑代码也加有注释,
 欢迎提出疑问或有更好的改进.毕竟本人一直在写Bug.    墙|ω･｀)  
 
 
 ---
 - (ง •_•)ง
+🐩🐩🐩
