@@ -1,24 +1,27 @@
 import Vue from 'vue'
-import 'normalize.css/normalize.css' // A modern alternative to CSS resets
+import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // import locale from 'element-ui/lib/locale/lang/en'
-import '@/styles/index.scss' // global css
+import '@/styles/index.scss'
 import App from './App'
 import store from './store'
 import router from './router'
 import '@/icons' // icon
-import '@/permission' // permission control
+// import '@/permission' // permission control
 //全局使用axios、qs
 import axios from 'axios'
 import qs from 'qs'
 Vue.prototype.$axios = axios
+const URL = 'http://10.40.25.15:5000/'
+axios.defaults.baseURL = URL
+//请求拦截器
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = 'JWT '+sessionStorage.getItem('token')
+  return config
+})
 Vue.prototype.$qs = qs
-//全局url
-const URL = 'http://10.40.25.15:5000'
-// const URL = 'http://10.200.42.176:5000'
-// const URL = 'http://120.79.8.150:5000'
-Vue.prototype.URL = URL
+
 //使用ElementUI
 Vue.use(ElementUI, {})
 //引入socket
@@ -67,21 +70,7 @@ Vue.prototype.tip = (type, msg, that, reload) => {
     })
   }
 }
-// 路由拦截器
-router.beforeEach(function (to, from, next) {
-  const token = sessionStorage.getItem('token')
-  if (token) {
-    next()
-  } else {
-    if (to.path === '/login') {
-      next()
-    } else {
-      next({
-        path: '/login'
-      })
-    }
-  }
-})
+
 // 自定义全局指令---实现拖拽和伸缩效果
 Vue.directive('drag', {
   bind: function (el) {

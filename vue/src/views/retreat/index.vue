@@ -1,22 +1,13 @@
 <template>
-  <div class="app-container">
-    策略
-  </div>
+  <div class="app-container">策略</div>
 </template>
 
 <script>
-
 export default {
   data() {
-    return {
-
-    }
+    return {}
   },
-  created() {
-
-  },
-  methods: {
-
-  }
+  created() {},
+  methods: {}
 }
 </script>

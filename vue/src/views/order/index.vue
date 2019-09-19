@@ -1,5 +1,5 @@
 <template>
-  <div class="order">
+  <div class="order" v-show="orderFlag">
     <transition enter-active-class="zoomIn" leave-active-class="zoomOut">
       <div class="journal animated faster" v-show="journal" v-drag ref="journal" id="journal">
         <p>
@@ -7,32 +7,32 @@
           <i class="el-icon-circle-close closeicon" @click="journal = false"></i>
         </p>
         <el-table :data="logData" stripe id="logTab">
-          <el-table-column prop="time" label="时间" width="180px">
+          <el-table-column prop="created" label="时间" min-width="160px">
             <template scope="scope">
-              <span style="color:red">{{ scope.row.time }}</span>
+              <span style="color:red">{{ scope.row.created }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="grade" label="等级">
+          <el-table-column prop="levelname" label="等级" min-width="80px">
             <template scope="scope">
-              <span style="color:#EF6FE9">{{ scope.row.grade }}</span>
+              <span style="color:#EF6FE9" >{{ scope.row.levelname }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="APP" label="APP">
+          <el-table-column prop="owner" label="APP" min-width="100px">
             <template scope="scope">
-              <span style="color:#000000">{{scope.row.APP}}</span>
+              <span style="color:#000000">{{scope.row.owner}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="interface" label="接口">
+          <el-table-column prop="name" label="接口" min-width="100px">
             <template scope="scope">
-              <span style="color:#30CCCC">{{scope.row.interface}}</span>
+              <span style="color:#30CCCC">{{scope.row.name}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="msg" label="信息">
+          <el-table-column prop="msg" label="信息" min-width="100px">
             <template scope="scope">
-              <span v-if="scope.row.grade==='INFO'" style="color:#67C23A">{{scope.row.msg}}</span>
-              <span v-if="scope.row.grade==='ERROR'" style="color:red">{{scope.row.msg}}</span>
-              <span v-if="scope.row.grade==='DEBUG'" style="color:#EF6FE9">{{scope.row.msg}}</span>
-              <span v-if="scope.row.grade==='WARNING'" style="color:#89C800">{{scope.row.msg}}</span>
+              <span v-if="scope.row.levelname==='INFO'" style="color:#67C23A">{{scope.row.msg}}</span>
+              <span v-if="scope.row.levelname==='ERROR'" style="color:red">{{scope.row.msg}}</span>
+              <span v-if="scope.row.levelname==='DEBUG'" style="color:#EF6FE9">{{scope.row.msg}}</span>
+              <span v-if="scope.row.levelname==='WARNING'" style="color:#89C800">{{scope.row.msg}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -148,7 +148,7 @@
               <el-input type="number" v-model.number="orderForm.price" placeholder="请输入价格"></el-input>
             </el-form-item>
             <el-form-item label="手数">
-              <el-input-number v-model="volume" :min="1" placeholder="请输入手数"></el-input-number>
+              <el-input-number v-model="orderForm.volume" :min="1" placeholder="请输入手数"></el-input-number>
             </el-form-item>
             <el-form-item label>
               <el-button type="success" @click="business(orderForm,'buy')">买多</el-button>
@@ -162,34 +162,34 @@
 </template>
 
 <script>
-import VueKline from "vue-kline";
-import elementResizeDetectorMaker from "element-resize-detector";
+import VueKline from 'vue-kline'
+import elementResizeDetectorMaker from 'element-resize-detector'
 export default {
-  inject: ["reload"],
+  inject: ['reload'],
   data() {
     return {
-      orderUrl: this.URL + "/order_solve",
-      klineUrl: this.URL + "/bar",
-      positionUrl: this.URL + "/close_position",
+      orderUrl: 'order_solve',
+      klineUrl: 'bar',
+      positionUrl: 'close_position',
       journal: false,
-      token: "",
-      klineBoxWidth: "",
+      orderFlag: false,
+      klineBoxWidth: '',
       orderForm: {
-        local_symbol: "",
-        price: ""
+        local_symbol: '',
+        price: '',
+        volume: 1
       },
-      volume: 1,
       options: [
         {
-          value: "limit",
-          label: "限价"
+          value: 'limit',
+          label: '限价'
         },
         {
-          value: "market",
-          label: "市价"
+          value: 'market',
+          label: '市价'
         }
       ],
-      type: "limit",
+      type: 'limit',
       tickTabData: {},
       positionData: [],
       activeOrderData: [],
@@ -197,27 +197,27 @@ export default {
       tradeData: [],
       logData: [],
       tick_map: {
-        ask_price_1: "买一价",
-        ask_volume_1: "买一量",
-        bid_price_1: "卖一价",
-        bid_volume_1: "卖一量",
-        last_price: "最新价格",
-        local_symbol: "本地id",
-        exchange: "交易所",
-        open_interest: "持仓量",
-        pre_close: "昨日收盘价",
-        volume: "成交量",
-        datetime: "时间"
+        ask_price_1: '买一价',
+        ask_volume_1: '买一量',
+        bid_price_1: '卖一价',
+        bid_volume_1: '卖一量',
+        last_price: '最新价格',
+        local_symbol: '本地id',
+        exchange: '交易所',
+        open_interest: '持仓量',
+        pre_close: '昨日收盘价',
+        volume: '成交量',
+        datetime: '时间'
       },
       //k线配置
       klineParams: {
         width: 800,
         height: 550,
-        theme: "light",
-        language: "zh-cn",
-        ranges: ["1w", "1d", "1h", "30m", "15m", "5m", "1m", "line"],
-        symbol: "BTC",
-        symbolName: "BTC/USD",
+        theme: 'light',
+        language: 'zh-cn',
+        ranges: ['1w', '1d', '1h', '30m', '15m', '5m', '1m', 'line'],
+        symbol: 'BTC',
+        symbolName: 'BTC/USD',
         intervalTime: 1000,
         depthWidth: 50
       },
@@ -228,167 +228,144 @@ export default {
           lines: []
         }
       }
-    };
+    }
   },
   components: {
     VueKline
   },
-  watch: {
-    volume(newVolume, oldVolume) {
-      if (newVolume < 1) {
-        this.orderForm.volume = 1;
-      }
-    }
-  },
   sockets: {
     //监听socket连接
     connect: function() {
-      console.log("下单已连接");
+      console.log('下单已连接')
     },
     //推送当前所选合约的行情数据
     tick: function(res) {
       // console.log(res)
-      let data = res.data;
+      let data = res.data
       if (res.data.local_symbol !== this.orderForm.local_symbol) {
-        return;
+        return
       }
       for (var i in this.tick_map) {
-        if (i == "datetime") {
-          this.tickTabData[i] = data[i].split(".")[0];
+        if (i == 'datetime') {
+          this.tickTabData[i] = data[i].split('.')[0]
         } else {
-          this.tickTabData[i] = data[i];
+          this.tickTabData[i] = data[i]
         }
       }
     },
     //推送持仓数据
     position: function(res) {
-      this.positionData = res.data;
+      this.positionData = res.data
     },
     //推送待成交数据
     active_order: function(res) {
-      this.activeOrderData = res.data;
+      this.activeOrderData = res.data
     },
     //推送成交数据
     trade: function(res) {
-      this.tradeData = res.data;
+      this.tradeData = res.data
     },
     //推送发单数据
     order: function(res) {
-      this.orderData = res.data;
+      this.orderData = res.data
     },
     //socket推送k线数据
     bar: function(res) {
       if (res.local_symbol === this.orderForm.local_symbol) {
-        this.klineData.data.lines.push(res.data);
+        this.klineData.data.lines.push(res.data)
       }
     },
     //推送日志数据
     log: function(res) {
-      if (this.logData.length >= 49) {
-        this.logData = this.logData.slice(0, 49);
+      if (this.logData.length >= 50) {
+        this.logData = this.logData.slice(0, 49)
       }
-      let resArr = res.split(" ");
-      let obj = {};
-      obj.time = resArr[0] + " " + resArr[1];
-      obj.grade = resArr[2];
-      obj.APP = resArr[3];
-      obj.interface = resArr[4] + " " + resArr[5];
-      obj.msg = resArr[6];
-      this.logData.unshift(obj);
+      this.logData.unshift(res)
     }
   },
   filters: {
     chinese: val => {
       let tick_map = {
-        ask_price_1: "买一价",
-        ask_volume_1: "买一量",
-        bid_price_1: "卖一价",
-        bid_volume_1: "卖一量",
-        last_price: "最新价格",
-        local_symbol: "本地id",
-        exchange: "交易所",
-        open_interest: "持仓量",
-        pre_close: "昨日收盘价",
-        volume: "成交量",
-        datetime: "时间"
-      };
-      return tick_map[val];
+        ask_price_1: '买一价',
+        ask_volume_1: '买一量',
+        bid_price_1: '卖一价',
+        bid_volume_1: '卖一量',
+        last_price: '最新价格',
+        local_symbol: '本地id',
+        exchange: '交易所',
+        open_interest: '持仓量',
+        pre_close: '昨日收盘价',
+        volume: '成交量',
+        datetime: '时间'
+      }
+      return tick_map[val]
     }
   },
   methods: {
     //获取持仓，待成交，发单，成交数据
     getTabData() {
       this.$axios
-        .get(this.orderUrl, {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .get(this.orderUrl)
         .then(res => {
-          let returnData = res.data;
+          let returnData = res.data
           if (returnData.success == true) {
-            console.log(returnData);
-            this.orderData = returnData.data.order_list;
-            this.positionData = returnData.data.position_list;
-            this.activeOrderData = returnData.data.active_order_list;
-            this.tradeData = returnData.data.trade_list;
-            this.logData = this.forEachLog(returnData.data.log_history);
+            this.orderData = returnData.data.order_list
+            this.positionData = returnData.data.position_list
+            this.activeOrderData = returnData.data.active_order_list
+            this.tradeData = returnData.data.trade_list
+            let log = returnData.data.log_history
+            this.logData =
+              log.length >= 50
+                ? log.slice(log.length - 50).reverse()
+                : log.reverse()
           }
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     //交易（买多。卖空）
     business(data, transactionType) {
-      if (data.price === "") {
+      if (data.price === '') {
         return this.$message({
           showClose: true,
-          message: "价格不能为空!",
-          type: "error"
-        });
-      }
-      data["volume"] = this.volume;
-      data["exchange"] = data.local_symbol.split(".")[1];
-      data["offset"] = "open";
-      data["type"] = this.type;
-      data["direction"] = transactionType === "buy" ? "long" : "short";
-      this.$axios
-        .post(this.orderUrl, this.$qs.stringify(data), {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
+          message: '价格不能为空!',
+          type: 'error'
         })
+      }
+      data['exchange'] = data.local_symbol.split('.')[1]
+      data['offset'] = 'open'
+      data['type'] = this.type
+      data['direction'] = transactionType === 'buy' ? 'long' : 'short'
+      this.$axios
+        .post(this.orderUrl, this.$qs.stringify(data))
         .then(res => {
-          let returnData = res.data;
-          this.tip(returnData.success, returnData.msg, this);
+          let returnData = res.data
+          this.tip(returnData.success, returnData.msg, this)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     //撤单
     cancelOrder(val) {
-      console.log(val);
+      console.log(val)
       this.$axios
         .delete(this.orderUrl, {
           params: {
             local_symbol: val.local_symbol,
             exchange: val.exchange,
             order_id: val.order_id
-          },
-          headers: {
-            Authorization: "JWT " + this.token
           }
         })
         .then(res => {
-          let returnData = res.data;
-          this.tip(returnData.success, returnData.msg, this);
-          console.log(res);
+          let returnData = res.data
+          this.tip(returnData.success, returnData.msg, this)
+          console.log(res)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     //平仓
     positionClose(val) {
@@ -399,151 +376,98 @@ export default {
         symbol: val.symbol,
         volume: val.volume,
         direction: val.direction
-      };
+      }
       this.$axios
-        .post(this.positionUrl, this.$qs.stringify(sendData), {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .post(this.positionUrl, this.$qs.stringify(sendData))
         .then(res => {
-          let returnData = res.data;
-          console.log(returnData);
-          this.tip(returnData.success, returnData.msg, this);
+          let returnData = res.data
+          console.log(returnData)
+          this.tip(returnData.success, returnData.msg, this)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
+    },
+    //获取K线数据
+    async getKlineData() {
+      let { data: returnData } = await this.$axios.post(
+        this.klineUrl,
+        this.$qs.stringify({ local_symbol: this.orderForm.local_symbol })
+      )
+      if (returnData.success === true) {
+        this.klineData.data.lines = returnData.data
+        //初始化k线
+        this.initKline()
+      } else {
+        this.tip(returnData.success, returnData.msg, this)
+      }
     },
     //初始化K线
     initKline() {
-      // this.$refs.kline.redraw()
-      this.klineBoxWidth = this.$refs.klineBox.offsetWidth;
+      this.klineBoxWidth = this.$refs.klineBox.offsetWidth
       //更新数据
-      this.$refs.kline.kline.data.lines = this.klineData.data.lines;
+      this.$refs.kline.kline.data.lines = this.klineData.data.lines
       //设置k线容器宽度
-      this.$refs.kline.resize(this.klineBoxWidth, 550);
+      this.$refs.kline.resize(this.klineBoxWidth, 550)
       //设置k线symbol
       this.$refs.kline.setSymbol(
         this.orderForm.local_symbol,
         this.orderForm.local_symbol
-      );
+      )
       //设置主题
-      this.$refs.kline.setTheme("light");
-    },
-    //监听K线盒子大小，以达到自适应的效果
-    watchWidth() {
-      var that = this;
-      elementResizeDetectorMaker().listenTo(
-        document.getElementById("klineBox"),
-        function(element) {
-          var width = element.offsetWidth;
-          that.klineParams.width = width;
-          try {
-            that.$refs.kline.resize(width, 550);
-          } catch (err) {
-            // console.log(err)
-          }
-        }
-      );
-      elementResizeDetectorMaker().listenTo(
-        document.getElementById("journal"),
-        function(element) {
-          var height = element.offsetHeight;
-          document.getElementById("logTab").style.height = height - 70 + "px";
-        }
-      );
-    },
-    //获取K线数据
-    getKlineData() {
-      this.$axios
-        .post(
-          this.klineUrl,
-          this.$qs.stringify({ local_symbol: this.orderForm.local_symbol }),
-          {
-            headers: {
-              Authorization: "JWT " + this.token
-            }
-          }
-        )
-        .then(res => {
-          let returnData = res.data;
-          if (returnData.success === true) {
-            this.klineData.data.lines = returnData.data;
-          } else {
-            this.tip(returnData.success, returnData.msg, this);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      this.$refs.kline.setTheme('light')
     },
     //初始化日志
     initJournal() {
       //因日志盒子是隐藏的，无法获取其宽，故暂时先写个固定值
-      let bw = 580;
-      let cw = document.body.clientWidth;
-      this.$refs.journal.style.left = (cw - bw) / 2 + "px";
+      let bw = 580
+      let cw = document.body.clientWidth
+      this.$refs.journal.style.left = (cw - bw) / 2 + 'px'
     },
-    //获取历史日志信息
-    forEachLog(arr) {
-      let logArr = [];
-      arr = arr.length >= 50 ? arr.slice(arr.length - 50) : arr;
-      for (let i in arr) {
-        let resArr = arr[i].split(" ");
-        let obj = {};
-        obj.time = resArr[0] + " " + resArr[1];
-        obj.grade = resArr[2];
-        obj.APP = resArr[3];
-        obj.interface = resArr[4] + " " + resArr[5];
-        obj.msg = resArr[6];
-        logArr.unshift(obj);
-      }
-      return logArr;
-    }
-  },
-  async mounted() {
-    this.orderForm.local_symbol = sessionStorage.getItem("symbolName");
-    this.token = sessionStorage.getItem("token");
-    if (!this.orderForm.local_symbol) {
-      return this.$alert("请先订阅行情！", "友情提示", {
-        confirmButtonText: "确定",
-        callback: action => {
-          this.$router.push({
-            path: "/quotation/index"
-          });
-        }
-      });
-    }
-    this.getTabData();
-    // this.getKlineData();
-    //请求k线数据
-    try {
-      let returnData = await this.$axios.post(
-        this.URL + "/bar",
-        this.$qs.stringify({ local_symbol: this.orderForm.local_symbol }),
-        {
-          headers: {
-            Authorization: "JWT " + this.token
+    //监听K线盒子大小，以达到自适应的效果
+    watchWidth() {
+      var that = this
+      elementResizeDetectorMaker().listenTo(
+        document.getElementById('klineBox'),
+        function(element) {
+          var width = element.offsetWidth
+          try {
+            that.$refs.kline.resize(width, 550)
+          } catch (err) {
+            // console.log(err)
           }
         }
-      );
-      if (returnData.data.success === true) {
-        this.klineData.data.lines = returnData.data.data;
-      } else {
-        this.tip(returnData.data.success, returnData.data.msg, this);
-      }
-    } catch (err) {
-      console.log(err);
+      )
+      elementResizeDetectorMaker().listenTo(
+        document.getElementById('journal'),
+        function(element) {
+          var height = element.offsetHeight
+          document.getElementById('logTab').style.height = height - 55 + 'px'
+        }
+      )
+    },
+  },
+  mounted() {
+    this.orderForm.local_symbol = sessionStorage.getItem('symbolName')
+    if (!this.orderForm.local_symbol) {
+      return this.$alert('请先订阅行情！', '友情提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.$router.push({
+            path: '/quotation/index'
+          })
+        }
+      })
     }
-
-    this.initKline();
-
-    this.watchWidth();
-
-    this.initJournal();
+    this.orderFlag = true
+    this.getTabData()
+    //请求k线数据
+    this.getKlineData()
+    // this.initKline()
+    this.watchWidth()
+    this.initJournal()
   }
-};
+}
 </script>
 <style lang="scss">
 .order {
@@ -551,12 +475,12 @@ export default {
   .el-select {
     width: 100%;
   }
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none !important;
     margin: 0;
   }
-  input[type="number"] {
+  input[type='number'] {
     -moz-appearance: textfield;
   }
   .tickTab {
@@ -601,6 +525,9 @@ export default {
     z-index: 1001;
     padding: 10px;
     overflow: hidden;
+    p {
+      margin: 5px 0 10px;
+    }
     span {
       margin-left: 10px;
     }

@@ -1,138 +1,132 @@
 <template>
   <div class="config">
-    <table>
-      <tr>
-        <th>key</th>
-        <th>value</th>
-      </tr>
-      <tr>
-        <td>CLOSE_PATTERN</td>
-        <td>
-          <el-select v-model="tableData.CLOSE_PATTERN" clearable placeholder="请选择">
-            <el-option
-              v-for="item in closePatternOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </td>
-      </tr>
-      <tr>
-        <td>INSTRUMENT_INDEPEND</td>
-        <td>
-          <el-switch
-            v-model="tableData.INSTRUMENT_INDEPEND"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-          ></el-switch>
-        </td>
-      </tr>
-      <tr>
-        <td>REFRESH_INTERVAL</td>
-        <td>
-          <el-input placeholder="请输入内容" v-model="tableData.REFRESH_INTERVAL"></el-input>
-        </td>
-      </tr>
-      <tr>
-        <td>SHARED_FUNC</td>
-        <td>
-          <el-switch
-            v-model="tableData.SHARED_FUNC"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-          ></el-switch>
-        </td>
-      </tr>
-      <tr>
-        <td>SLIPPAGE_SHORT</td>
-        <td>
-          <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_SHORT"></el-input>
-        </td>
-      </tr>
-      <tr>
-        <td>SLIPPAGE_BUY</td>
-        <td>
-          <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_BUY"></el-input>
-        </td>
-      </tr>
-      <tr>
-        <td>SLIPPAGE_COVER</td>
-        <td>
-          <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_COVER"></el-input>
-        </td>
-      </tr>
-      <tr>
-        <td>SLIPPAGE_SELL</td>
-        <td>
-          <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_SELL"></el-input>
-        </td>
-      </tr>
-    </table>
-    <el-button type="success" style="margin-top:10px;" @click="updateConfig(tableData)">确认更改</el-button>
+    <el-card class="box-card">
+      <table>
+        <tr>
+          <th>key</th>
+          <th>value</th>
+        </tr>
+        <tr>
+          <td>CLOSE_PATTERN</td>
+          <td>
+            <el-select v-model="tableData.CLOSE_PATTERN" clearable placeholder="请选择">
+              <el-option
+                v-for="item in closePatternOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </td>
+        </tr>
+        <tr>
+          <td>INSTRUMENT_INDEPEND</td>
+          <td>
+            <el-switch
+              v-model="tableData.INSTRUMENT_INDEPEND"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
+          </td>
+        </tr>
+        <tr>
+          <td>REFRESH_INTERVAL</td>
+          <td>
+            <el-input placeholder="请输入内容" v-model="tableData.REFRESH_INTERVAL"></el-input>
+          </td>
+        </tr>
+        <tr>
+          <td>SHARED_FUNC</td>
+          <td>
+            <el-switch
+              v-model="tableData.SHARED_FUNC"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            ></el-switch>
+          </td>
+        </tr>
+        <tr>
+          <td>SLIPPAGE_SHORT</td>
+          <td>
+            <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_SHORT"></el-input>
+          </td>
+        </tr>
+        <tr>
+          <td>SLIPPAGE_BUY</td>
+          <td>
+            <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_BUY"></el-input>
+          </td>
+        </tr>
+        <tr>
+          <td>SLIPPAGE_COVER</td>
+          <td>
+            <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_COVER"></el-input>
+          </td>
+        </tr>
+        <tr>
+          <td>SLIPPAGE_SELL</td>
+          <td>
+            <el-input placeholder="请输入内容" v-model="tableData.SLIPPAGE_SELL"></el-input>
+          </td>
+        </tr>
+      </table>
+      <el-button type="success" style="margin-top:10px;" @click="updateConfig(tableData)">确认更改</el-button>
+    </el-card>
   </div>
 </template>
 
 <script>
 export default {
-  inject: ["reload"],
+  inject: ['reload'],
   data() {
     return {
-      configUrl: this.URL + "/config",
+      configUrl: 'config',
       tableData: {},
       closePatternOptions: [
         {
-          value: "today",
-          label: "today"
+          value: 'today',
+          label: 'today'
         },
         {
-          value: "yesterday",
-          label: "yesterday"
+          value: 'yesterday',
+          label: 'yesterday'
         }
       ]
-    };
+    }
   },
   mounted() {
-    this.token = sessionStorage.getItem("token");
-    this.getData();
+    this.getData()
   },
   methods: {
     getData() {
       this.$axios
-        .get(this.configUrl, {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .get(this.configUrl)
         .then(res => {
-          let returnData = res.data;
+          let returnData = res.data
           if (returnData.success === true) {
-            this.tableData = returnData.data;
+            this.tableData = returnData.data
           } else {
-            this.tip(returnData.success, returnData.msg, this);
+            this.tip(returnData.success, returnData.msg, this)
           }
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
     updateConfig(data) {
       this.$axios
-        .put(this.configUrl, this.$qs.stringify(data), {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .put(this.configUrl, this.$qs.stringify(data))
         .then(res => {
-          let returnData = res.data;
-          this.tip(returnData.success, returnData.msg, this, true);
+          let returnData = res.data
+          this.tip(returnData.success, returnData.msg, this)
+          this.getData()
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .config {
@@ -166,10 +160,10 @@ export default {
 .config .el-input__inner {
   width: 50%;
 }
-.config .el-select{
+.config .el-select {
   width: 50%;
 }
-.config .el-select .el-input__inner{
-  width:100%;
+.config .el-select .el-input__inner {
+  width: 100%;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
-  <div class="box">
+  <div class="box" :style="{backgroundImage: 'url(' + bgNum + ')'}">
+
     <div class="login">
       <el-tabs type="border-card">
         <el-tab-pane label="普通登录">
@@ -81,109 +82,118 @@
 </template>
 
 <script>
-import { setTimeout } from "timers";
+import { setTimeout } from 'timers'
+import bg1 from "@/assets/bg/1.jpg"
+import bg2 from "@/assets/bg/2.jpg"
+import bg3 from "@/assets/bg/3.jpg"
+import bg4 from "@/assets/bg/4.jpg"
+import bg5 from "@/assets/bg/5.jpg"
+import bg6 from "@/assets/bg/6.jpg"
+import bg7 from "@/assets/bg/7.jpg"
+import bg8 from "@/assets/bg/8.jpg"
+import bg9 from "@/assets/bg/9.jpg"
+import bg10 from "@/assets/bg/10.jpg"
 export default {
-  inject:['reload'],
-  name: "Login",
+  inject: ['reload'],
+  name: 'Login',
   data() {
     return {
-      loginUrl: this.URL + "/login",
-      checkUrl: this.URL + "/check_key",
+      loginUrl: 'login',
+      bgNum:bg1,
       commonLogin: {
-        userid: "089131",
-        password: "350888",
-        authorization: "00000000"
+        userid: '089131',
+        password: '350888',
+        authorization: '00000000'
       },
       interfaceOptions: [
         {
-          value: "ctp",
-          label: "ctp"
+          value: 'ctp',
+          label: 'ctp'
         },
         {
-          value: "ctp_se",
-          label: "ctp_se"
+          value: 'ctp_se',
+          label: 'ctp_se'
         }
       ],
-      interface: "ctp",
+      interface: 'ctp',
       options: [
         {
-          value: "simnow24小时",
-          label: "simnow24小时"
+          value: 'simnow24小时',
+          label: 'simnow24小时'
         },
         {
-          value: "simnow移动",
-          label: "simnow移动"
+          value: 'simnow移动',
+          label: 'simnow移动'
         }
       ],
-      simnowValue: "simnow24小时",
+      simnowValue: 'simnow24小时',
       detailedLogin: {
-        userid: "",
-        password: "",
-        detailedLogin: "",
-        brokerid: "",
-        appid: "",
-        auth_code: "",
-        td_address: "",
-        md_address: ""
+        userid: '',
+        password: '',
+        detailedLogin: '',
+        brokerid: '',
+        appid: '',
+        auth_code: '',
+        td_address: '',
+        md_address: ''
       },
       simple_login_info: {
         simnow_forever: {
-          appid: "simnow_client_test",
-          auth_code: "0000000000000000",
-          td_address: "tcp://180.168.146.187:10130",
-          md_address: "tcp://180.168.146.187:10131",
-          brokerid: "9999"
+          appid: 'simnow_client_test',
+          auth_code: '0000000000000000',
+          td_address: 'tcp://180.168.146.187:10130',
+          md_address: 'tcp://180.168.146.187:10131',
+          brokerid: '9999'
         },
         simnow_inet: {
-          appid: "simnow_client_test",
-          auth_code: "0000000000000000",
-          td_address: "tcp://218.202.237.33:10102",
-          md_address: "tcp://218.202.237.33:10112",
-          brokerid: "9999"
+          appid: 'simnow_client_test',
+          auth_code: '0000000000000000',
+          td_address: 'tcp://218.202.237.33:10102',
+          md_address: 'tcp://218.202.237.33:10112',
+          brokerid: '9999'
         }
       },
       loading: false
-    };
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect;
-      },
-      immediate: true
     }
   },
   methods: {
     handleLogin(data, type) {
-      data["interface"] = this.interface;
-      if (type === "common") {
+      data['interface'] = this.interface
+      if (type === 'common') {
         let simnowObj =
-          this.simnowValue === "simnow24小时"
-            ? this.simple_login_info["simnow_forever"]
-            : this.simple_login_info["simnow_inet"];
+          this.simnowValue === 'simnow24小时'
+            ? this.simple_login_info['simnow_forever']
+            : this.simple_login_info['simnow_inet']
         for (let i in simnowObj) {
-          data[i] = simnowObj[i];
+          data[i] = simnowObj[i]
         }
       }
       this.$axios
         .post(this.loginUrl, this.$qs.stringify(data))
         .then(res => {
-          let returnData = res.data;
-          this.tip(returnData.success, returnData.msg, this);
+          let returnData = res.data
+          this.tip(returnData.success, returnData.msg, this)
           if (returnData.success === true) {
-            sessionStorage.setItem("token", returnData.data);
+            sessionStorage.setItem('token', returnData.data)
             setTimeout(() => {
-              this.$router.push({ path: "/" });
-            }, 1000);
+              this.$router.push({ path: '/dashboard/index' })
+            }, 1000)
           }
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
+    },
+    backgroundWheel() {
+      let arr=[bg1,bg2,bg3,bg4,bg5,bg6,bg7,bg8,bg9,bg10]
+      let ramdomNum=Math.floor(Math.random()*10)
+      this.bgNum=arr[ramdomNum]
     }
   },
-  mounted() {}
-};
+  mounted() {
+    this.backgroundWheel()
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -191,6 +201,9 @@ $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
 $width: 400px;
+body {
+  min-height: 625px;
+}
 .box {
   width: 100%;
   height: 100%;
@@ -198,6 +211,10 @@ $width: 400px;
   justify-content: center;
   align-items: center;
   background-color: #eee;
+  // background: url("~@/assets/bg/2.jpg") no-repeat;
+  // background-image: url('~@/assets/bg/1.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .login {
   width: $width;
@@ -205,9 +222,6 @@ $width: 400px;
 }
 </style>
 <style lang="scss">
-body{
-  min-height: 625px;
-}
 $width: 400px;
 .login {
   .el-tabs__item {

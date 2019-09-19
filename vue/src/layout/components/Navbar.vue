@@ -18,7 +18,7 @@
           <!-- <i class="el-icon-caret-bottom" /> -->
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
+          <router-link to="/dashboard/index">
             <el-dropdown-item>首页</el-dropdown-item>
           </router-link>
           <el-dropdown-item>
@@ -81,8 +81,8 @@ import { setTimeout } from "timers";
 export default {
   data() {
     return {
-      modifyUrl: this.URL + "/auth_code",
-      serveUrl: this.URL + "/logout",
+      modifyUrl: "auth_code",
+      serveUrl: "logout",
       dialogVisible: false,
       serveConfirm: false,
       token: "",
@@ -108,7 +108,6 @@ export default {
     },
     logout() {
       sessionStorage.removeItem("token");
-      this.$store.dispatch("user/logout");
       this.$router.push({ path: "/login" });
     },
     modify(data) {

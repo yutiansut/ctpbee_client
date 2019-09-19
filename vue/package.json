@@ -28,7 +28,7 @@
     "qs": "^6.8.0",
     "socket.io-client": "^2.2.0",
     "vue": "2.6.10",
-    "vue-kline": "^1.0.9",
+    "vue-kline": "^1.1.0",
     "vue-router": "3.0.6",
     "vue-socket.io": "^3.0.7",
     "vuex": "3.1.0"

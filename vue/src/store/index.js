@@ -8,14 +8,8 @@ import user from './modules/user'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  state: {
-    width: ''
-  },
-  mutations: {
-    setWidth(state, width) {
-      state.width = width
-    }
-  },
+  state: {},
+  mutations: {},
   modules: {
     app,
     settings,

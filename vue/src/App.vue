@@ -6,8 +6,9 @@
 
 <script>
 export default {
-  name: "App",
-   provide() { // 注册一个方法
+  name: 'App',
+  provide() {
+    // 注册一个方法
     return {
       reload: this.reload
     }
@@ -24,14 +25,11 @@ export default {
         this.isRouterAlive = true
       })
     }
-  },
-  mounted() {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      this.$router.push({ path: "/login" });
-    }
   }
-};
+}
 </script>
 <style lang="scss">
+body {
+  background-color: #eee;
+}
 </style>

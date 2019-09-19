@@ -45,23 +45,20 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/empty',
-    name: 'empty',
-    component: () => import('@/views/empty'),
-    hidden: true
-  },
-  {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/login',
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
+      path: 'index',
+      name: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '控制台', icon: 'dashboard' }
     }]
   },
-
   {
     path: '/account',
     component: Layout,
@@ -167,4 +164,13 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
+
+// 路由拦截器
+router.beforeEach( (to, from, next)=> {
+  if (to.path === '/login') return next()
+  const token = sessionStorage.getItem('token')
+  if (!token) return next('/login')
+  next()
+})
+
 export default router
