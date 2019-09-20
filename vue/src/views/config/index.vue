@@ -103,11 +103,14 @@ export default {
         .get(this.configUrl)
         .then(res => {
           let returnData = res.data
-          if (returnData.success === true) {
-            this.tableData = returnData.data
-          } else {
-            this.tip(returnData.success, returnData.msg, this)
-          }
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:false,
+            success: () => {
+              this.tableData = returnData.data
+            }
+          })
         })
         .catch(err => {
           console.log(err)
@@ -118,8 +121,14 @@ export default {
         .put(this.configUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
-          this.getData()
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+            success: () => {
+              this.getData()
+            }
+          })
         })
         .catch(err => {
           console.log(err)

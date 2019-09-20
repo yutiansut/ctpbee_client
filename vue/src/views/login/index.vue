@@ -1,6 +1,5 @@
 <template>
   <div class="box" :style="{backgroundImage: 'url(' + bgNum + ')'}">
-
     <div class="login">
       <el-tabs type="border-card">
         <el-tab-pane label="普通登录">
@@ -83,23 +82,23 @@
 
 <script>
 import { setTimeout } from 'timers'
-import bg1 from "@/assets/bg/1.jpg"
-import bg2 from "@/assets/bg/2.jpg"
-import bg3 from "@/assets/bg/3.jpg"
-import bg4 from "@/assets/bg/4.jpg"
-import bg5 from "@/assets/bg/5.jpg"
-import bg6 from "@/assets/bg/6.jpg"
-import bg7 from "@/assets/bg/7.jpg"
-import bg8 from "@/assets/bg/8.jpg"
-import bg9 from "@/assets/bg/9.jpg"
-import bg10 from "@/assets/bg/10.jpg"
+import bg1 from '@/assets/bg/1.jpg'
+import bg2 from '@/assets/bg/2.jpg'
+import bg3 from '@/assets/bg/3.jpg'
+import bg4 from '@/assets/bg/4.jpg'
+import bg5 from '@/assets/bg/5.jpg'
+import bg6 from '@/assets/bg/6.jpg'
+import bg7 from '@/assets/bg/7.jpg'
+import bg8 from '@/assets/bg/8.jpg'
+import bg9 from '@/assets/bg/9.jpg'
+import bg10 from '@/assets/bg/10.jpg'
 export default {
   inject: ['reload'],
   name: 'Login',
   data() {
     return {
       loginUrl: 'login',
-      bgNum:bg1,
+      bgNum: bg1,
       commonLogin: {
         userid: '089131',
         password: '350888',
@@ -172,22 +171,26 @@ export default {
         .post(this.loginUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
-          if (returnData.success === true) {
-            sessionStorage.setItem('token', returnData.data)
-            setTimeout(() => {
-              this.$router.push({ path: '/dashboard/index' })
-            }, 1000)
-          }
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+            success: () => {
+              sessionStorage.setItem('token', returnData.data)
+              setTimeout(() => {
+                this.$router.push({ path: '/dashboard/index' })
+              }, 1000)
+            }
+          })
         })
         .catch(err => {
           console.log(err)
         })
     },
     backgroundWheel() {
-      let arr=[bg1,bg2,bg3,bg4,bg5,bg6,bg7,bg8,bg9,bg10]
-      let ramdomNum=Math.floor(Math.random()*10)
-      this.bgNum=arr[ramdomNum]
+      let arr = [bg1, bg2, bg3, bg4, bg5, bg6, bg7, bg8, bg9, bg10]
+      let ramdomNum = Math.floor(Math.random() * 10)
+      this.bgNum = arr[ramdomNum]
     }
   },
   mounted() {

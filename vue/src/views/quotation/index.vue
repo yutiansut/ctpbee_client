@@ -61,16 +61,22 @@ export default {
   methods: {
     subscribe(symbol) {
       if (!symbol) {
-        this.tip('error', '请先选择', this)
-        return
+        return this.tips({
+          type: 'error',
+          msg: '请先选择',
+          isTips: true
+        })
       }
       this.$axios
         .post(this.quotationUrl, this.$qs.stringify({ symbol: symbol }))
         .then(res => {
           let returnData = res.data
           sessionStorage.setItem('symbolName', symbol)
-          this.tip(returnData.success, returnData.msg, this)
-          // window.location.reload()
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true
+          })
         })
         .catch(err => {
           console.log(err)
@@ -85,7 +91,11 @@ export default {
         .put(this.quotationUrl, this.$qs.stringify({ name: 'test' }))
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+          })
         })
         .catch(err => {
           console.log(err)

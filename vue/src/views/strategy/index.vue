@@ -68,8 +68,14 @@ export default {
         )
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
-          this.getStrategyData()
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips: true,
+            success: () => {
+              this.getStrategyData()
+            }
+          })
         })
         .catch(err => {
           console.log(err)
@@ -98,8 +104,14 @@ export default {
             })
             .then(res => {
               let returnData = res.data
-              this.tip(returnData.success, returnData.msg, this)
-              this.getStrategyData()
+              this.tips({
+                type: returnData.success,
+                msg: returnData.msg,
+                isTips: true,
+                success: () => {
+                  this.getStrategyData()
+                }
+              })  
             })
             .catch(err => {
               console.log(err)

@@ -111,14 +111,14 @@ export const constantRoutes = [
   },
 
   {
-    path: '/retreat',
+    path: '/test',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'retreat',
-        component: () => import('@/views/retreat/index'),
-        meta: { title: '回 测', icon: '回撤' }
+        name: 'test',
+        component: () => import('@/views/test/index'),
+        meta: { title: '回 测', icon: '回测' }
       }
     ]
   },

@@ -118,9 +118,16 @@ export default {
           }
         })
         .then(res => {
-          let retrunData = res.data;
-          this.tip(retrunData.success, retrunData.msg, this);
-          this.dialogVisible = false;
+          let returnData = res.data;
+           this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+            success: () => {
+              this.dialogVisible = false;
+            }
+          })
+
         })
         .catch(err => {
           console.log(err);
@@ -134,12 +141,15 @@ export default {
           }
         })
         .then(res => {
-          let retrunData = res.data;
-          this.tip(retrunData.success, retrunData.msg, this);
-          this.serveConfirm = false;
-          if (retrunData.success === true) {
-            this.logout();
-          }
+          let returnData = res.data;
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+            success: () => {
+               this.logout();
+            }
+          })
         })
         .catch(err => {
           console.log(err);

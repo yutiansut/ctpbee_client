@@ -1,0 +1,23 @@
+{
+  "id": "1426768",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2882102",
+      "name": "开始",
+      "font_class": "kaishi",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "9478145",
+      "name": "停止中",
+      "font_class": "zhi_",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    }
+  ]
+}

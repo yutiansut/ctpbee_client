@@ -1,0 +1,25 @@
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1568959010650'); /* IE9 */
+  src: url('iconfont.eot?t=1568959010650#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAPEAAsAAAAAB+QAAAN3AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqDTIMLATYCJAMMCwgABCAFhG0HNxvSBsgekiRIQAEFAABQaIvj4Ws/9ufu7hNMm1qk+3SSaMRTwmMjUYJl+FICP75bPmh6krllZoUzFSQtBS+diGp3E7NfEtCT3+e5HN9Vzw+s9S3LcQ0bm/a2hQHGWwMdewikBRKQN4xd0BKXE+g0rh/VTnJmIfgozHaBuBUFHfhkrIrCAq1QVwwtEC/AatMU9XUAz8H34z/4hw9IqgzmSrvnSUaI/Yb3McxoD6jMY2D0dAawUWSsAoU4qzQdYCLvKkanqkDNkbUipKkcHg+BQFPVG/3jJaIGM74bLEJf4hscHsF3jE/C9VuoYe0dgLcJdiUp040ao87dht15APffFj58X6x8KHlQtGFZj4c4Sz14V3TTMQ+Lt26uVY/e0HOb0vxU9tb84o3rB9WfP7+5esGCFg0WLVIxixbGAg56/T4eHDpGSVCNWTjVcs9vfvo+KDtMU0paLVrYcuHGmocP8dT7hfMXt2gxbVGrW0q9mtTR92PnL2mxoMWiXHdFKVYehjTd2DFwQR66hPEl14cwRpeSbiLUrC72JGikOkQIglQdIQL4hmXhG0ITmw45tTy+ww5u4+opR9/jDXvzkjr+t6BPr9nPfLv5PpvdZfY33C3sxsDfX36P+L1gfI+0Cwip0fmknmNKm7GDcJDvwkB7vxlZ7KMupI7Nnts/tu8x1CaxNE73MivzaCafv0Qbz01pmnqdHZPwY3rvgQTzitT+006mNZ6f5NQuTNTEaZdAbqGph4AA/EKIGfP7fuPLn31R0yjyX1sPAbxvndYlEHWzgPbmzMHPSivA7wVxsanORRE4AsOcHaYiJHRqSr8oGQY9H64a6RxPaI0kSBpjyFqzRGGsotJlDbXWOjqtSBndZYiEEcUXWDYBIPTbhaTXK7J+N4jCeIbKqG+o9QeDTnvRbMou8yHiBInqZGok+iFENDjsvK2VcZiYT4UBVp2UFgfMYiq5RQfx47T5QAq1U2mKHu6Bgr8s84SXHDaSDFajVquDOCWHmRpkziTLznCNhq96EGdw2ADbJqF0ZJQRoTcEITJwsOO9wjJc+Hw+SjCAlY7UkFPlL0ZJ3MT6CT8cbQciRWHvlHMrp7gNJPAnk/EInsTBhkgGBspqeR0IZ3UjM8pAxjENcDuF06B8fFcFt7zK9n6LoJPZPYdaxagQ1Dc60W0S0VDHWAMAAA==') format('woff2'),
+  url('iconfont.woff?t=1568959010650') format('woff'),
+  url('iconfont.ttf?t=1568959010650') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1568959010650#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-kaishi:before {
+  content: "\e600";
+}
+
+.icon-zhi_:before {
+  content: "\e63f";
+}
+

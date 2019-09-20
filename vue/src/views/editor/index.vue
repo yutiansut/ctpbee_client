@@ -253,7 +253,13 @@ ext = StrategyClass('strategy_name')
         .post(this.updateUrl, this.$qs.stringify({ text: code }))
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
+
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips:true,
+          })
+
         })
         .catch(err => {
           console.log(err)

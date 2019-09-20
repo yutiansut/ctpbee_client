@@ -2,13 +2,12 @@ import Vue from 'vue'
 import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-// import locale from 'element-ui/lib/locale/lang/en'
 import '@/styles/index.scss'
 import App from './App'
 import store from './store'
 import router from './router'
 import '@/icons' // icon
-// import '@/permission' // permission control
+import '@/assets/css/font/iconfont.css'
 //全局使用axios、qs
 import axios from 'axios'
 import qs from 'qs'
@@ -47,30 +46,11 @@ import {
 if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
-
 Vue.config.productionTip = false
 
+import tips from '@/assets/globalMethod/tips'
 // 提示框
-Vue.prototype.tip = (type, msg, that, reload) => {
-  var errorMsg = 'token error'
-  var tipType = type === true ? 'success' : 'error'
-  var tipMsg = msg === errorMsg ? '登录信息已过期，请重新登录!' : msg
-  that.$message({
-    showClose: true,
-    message: tipMsg,
-    type: tipType
-  })
-  if (reload === true) {
-    that.reload()
-  }
-  if (msg === errorMsg) {
-    sessionStorage.removeItem('token')
-    that.$router.push({
-      path: '/login'
-    })
-  }
-}
-
+Vue.use(tips)
 // 自定义全局指令---实现拖拽和伸缩效果
 Vue.directive('drag', {
   bind: function (el) {
@@ -145,60 +125,6 @@ Vue.directive('drag', {
       document.onmouseup = (e) => {
         document.onmousemove = null;
         document.onmouseup = null;
-      }
-    }
-  }
-})
-//伸缩效果，本来和拖拽分开实现，但会冲突，故放在一块
-Vue.directive('telescopic', {
-  bind: function (el) {
-    let div = el
-    div.onmousemove = function (el) {
-      var disX = el.clientX - div.offsetLeft;
-      var disY = el.clientY - div.offsetTop;
-      if ((disX <= 10 && disY <= 10) || (disX >= (div.offsetWidth - 10) && disY >= (div.offsetHeight - 10))) {
-        div.style.cursor = "nwse-resize"
-      } else if ((disX <= 10 && disY >= (div.offsetHeight - 10)) || (disY <= 10 && disX >= (div.offsetWidth - 10))) {
-        div.style.cursor = "nesw-resize"
-      } else if (disX <= 10 || disX >= (div.offsetWidth - 10)) {
-        div.style.cursor = "ew-resize"
-      } else if (disY <= 10 || disY >= (div.offsetHeight - 10)) {
-        div.style.cursor = "ns-resize"
-      } else {
-        div.style.cursor = ""
-      }
-    }
-    div.onmousedown = function (el) { //鼠标按下时保存当前鼠标的位置和元素的offset之间的差值
-      el = el || event;
-      var disX = el.clientX - div.offsetLeft;
-      var disY = el.clientY - div.offsetTop;
-      var oldX = el.clientX;
-      var oldY = el.clientY;
-      document.onmousemove = function (el) { //鼠标移动时赋予元素新的位置和宽度
-        el = el || event;
-        if (disX <= 10) { //当鼠标向左拖动时
-          div.style.left = div.offsetLeft + (el.clientX - oldX) +
-            'px'; //元素当前的left值（此时ev.clientX - oldX为负值）
-          div.style.width = div.offsetWidth - (el.clientX - oldX) + 'px'; //元素当前的宽度
-
-        } else if (disX >= (div.offsetWidth - 10)) { //当鼠标向右拖动时
-          div.style.cursor = "ew-resize"
-          div.style.width = div.offsetWidth + (el.clientX - oldX) + 'px';
-          disX = el.clientX - div.offsetLeft;
-        }
-        if (disY <= 10) { //当鼠标向上拖动时（此时ev.clientX - oldX为负值）
-          div.style.cursor = "ns-resize"
-          div.style.top = div.offsetTop + (el.clientY - oldY) + 'px';
-          div.style.height = div.offsetHeight - (el.clientY - oldY) + 'px';
-        } else if (disY >= (div.offsetHeight - 10)) { //当鼠标向下拖动时
-          div.style.height = div.offsetHeight + (el.clientY - oldY) + 'px';
-          disY = el.clientY - div.offsetTop;
-        }
-        oldX = el.clientX;
-        oldY = el.clientY;
-      }
-      document.onmouseup = function () {
-        document.onmouseup = document.onmousemove = null;
       }
     }
   }

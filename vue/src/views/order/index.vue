@@ -14,7 +14,7 @@
           </el-table-column>
           <el-table-column prop="levelname" label="等级" min-width="80px">
             <template scope="scope">
-              <span style="color:#EF6FE9" >{{ scope.row.levelname }}</span>
+              <span style="color:#EF6FE9">{{ scope.row.levelname }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="owner" label="APP" min-width="100px">
@@ -165,7 +165,6 @@
 import VueKline from 'vue-kline'
 import elementResizeDetectorMaker from 'element-resize-detector'
 export default {
-  inject: ['reload'],
   data() {
     return {
       orderUrl: 'order_solve',
@@ -341,7 +340,11 @@ export default {
         .post(this.orderUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips: true
+          })
         })
         .catch(err => {
           console.log(err)
@@ -350,6 +353,7 @@ export default {
     //撤单
     cancelOrder(val) {
       console.log(val)
+
       this.$axios
         .delete(this.orderUrl, {
           params: {
@@ -360,8 +364,11 @@ export default {
         })
         .then(res => {
           let returnData = res.data
-          this.tip(returnData.success, returnData.msg, this)
-          console.log(res)
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips: true
+          })
         })
         .catch(err => {
           console.log(err)
@@ -382,7 +389,11 @@ export default {
         .then(res => {
           let returnData = res.data
           console.log(returnData)
-          this.tip(returnData.success, returnData.msg, this)
+          this.tips({
+            type: returnData.success,
+            msg: returnData.msg,
+            isTips: true
+          })
         })
         .catch(err => {
           console.log(err)
@@ -394,13 +405,17 @@ export default {
         this.klineUrl,
         this.$qs.stringify({ local_symbol: this.orderForm.local_symbol })
       )
-      if (returnData.success === true) {
-        this.klineData.data.lines = returnData.data
-        //初始化k线
-        this.initKline()
-      } else {
-        this.tip(returnData.success, returnData.msg, this)
-      }
+
+      this.tips({
+        type: returnData.success,
+        msg: returnData.msg,
+        isTips: false,
+        success: () => {
+          this.klineData.data.lines = returnData.data
+          //初始化k线
+          this.initKline()
+        }
+      })
     },
     //初始化K线
     initKline() {
@@ -445,7 +460,7 @@ export default {
           document.getElementById('logTab').style.height = height - 55 + 'px'
         }
       )
-    },
+    }
   },
   mounted() {
     this.orderForm.local_symbol = sessionStorage.getItem('symbolName')
