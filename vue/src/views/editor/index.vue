@@ -373,9 +373,3 @@ ext = StrategyClass('strategy_name')
   }
 }
 </style>
-<style>
-/* .el-drawer__open .el-drawer.btt {
-  overflow: auto;
-  height: 50% !important;
-} */
-</style>

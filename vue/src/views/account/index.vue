@@ -1,7 +1,7 @@
 <template>
   <div class="account">
     <el-card class="box-card">
-      <h4>基本账户信息</h4>
+      <p>基本账户信息</p>
       <el-table :data="tableData" border style="width: 100%">
         <el-table-column prop="key" label="key">
           <template slot-scope="scope">{{ scope.row.key | chinese() }}</template>
@@ -55,9 +55,8 @@ export default {
 <style lang="scss" scoped>
 .account {
   padding: 20px;
-  h4 {
+  p {
     color: #666;
-    font-weight: normal;
   }
 }
 </style>

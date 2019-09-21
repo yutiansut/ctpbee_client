@@ -77,7 +77,6 @@
 
 <script>
 export default {
-  inject: ['reload'],
   data() {
     return {
       configUrl: 'config',
@@ -138,9 +137,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.config {
-  padding: 20px;
-}
 .config {
   padding: 20px;
   table {

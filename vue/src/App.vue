@@ -31,5 +31,6 @@ export default {
 <style lang="scss">
 body {
   background-color: #eee;
+  min-width: 1300px!important;
 }
 </style>

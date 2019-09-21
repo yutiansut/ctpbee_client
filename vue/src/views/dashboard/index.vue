@@ -31,8 +31,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
 <style lang="scss">
 .dashboard {
   padding: 15px;

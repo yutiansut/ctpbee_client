@@ -112,11 +112,7 @@ export default {
     },
     modify(data) {
       this.$axios
-        .put(this.modifyUrl, this.$qs.stringify(data), {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .put(this.modifyUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data;
            this.tips({
@@ -135,11 +131,7 @@ export default {
     },
     servelogout(data) {
       this.$axios
-        .post(this.serveUrl, this.$qs.stringify(data), {
-          headers: {
-            Authorization: "JWT " + this.token
-          }
-        })
+        .post(this.serveUrl, this.$qs.stringify(data))
         .then(res => {
           let returnData = res.data;
           this.tips({
