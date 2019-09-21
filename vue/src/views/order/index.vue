@@ -27,12 +27,12 @@
               <span style="color:#30CCCC">{{scope.row.name}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="msg" label="信息" min-width="100px">
+          <el-table-column prop="message" label="信息" min-width="100px">
             <template scope="scope">
-              <span v-if="scope.row.levelname==='INFO'" style="color:#67C23A">{{scope.row.msg}}</span>
-              <span v-if="scope.row.levelname==='ERROR'" style="color:red">{{scope.row.msg}}</span>
-              <span v-if="scope.row.levelname==='DEBUG'" style="color:#EF6FE9">{{scope.row.msg}}</span>
-              <span v-if="scope.row.levelname==='WARNING'" style="color:#89C800">{{scope.row.msg}}</span>
+              <span v-if="scope.row.levelname==='INFO'" style="color:#67C23A">{{scope.row.message}}</span>
+              <span v-if="scope.row.levelname==='ERROR'" style="color:red">{{scope.row.message}}</span>
+              <span v-if="scope.row.levelname==='DEBUG'" style="color:#EF6FE9">{{scope.row.message}}</span>
+              <span v-if="scope.row.levelname==='WARNING'" style="color:#89C800">{{scope.row.message}}</span>
             </template>
           </el-table-column>
         </el-table>

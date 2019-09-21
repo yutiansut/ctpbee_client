@@ -1,11 +1,13 @@
-## Build Set
+# Build Set
+
+## 启动
 
 ```bash
 # 克隆项目
-git clone https://github.com/PanJiaChen/vue-admin-template.git
+git clone https://github.com/ctpbee/ctpbee_client.git
 
 # 进入项目目录
-cd vue-admin-template
+cd ctpbee_client/vue
 
 # 安装依赖
 npm install

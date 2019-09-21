@@ -17,7 +17,7 @@
               placeholder="授权码/AUTHORIZATION_CODE"
               @keyup.enter.native="handleLogin(detailedLogin,'common')"
             ></el-input>
-            <el-select v-model="interface" clearable placeholder="请选择">
+            <el-select v-model="interfaceName" clearable placeholder="请选择">
               <el-option
                 v-for="item in interfaceOptions"
                 :key="item.value"
@@ -62,7 +62,7 @@
               placeholder="授权码/AUTHORIZATION_CODE"
               @keyup.enter.native="handleLogin(detailedLogin,'detail')"
             ></el-input>
-            <el-select v-model="interface" clearable placeholder="请选择">
+            <el-select v-model="interfaceName" clearable placeholder="请选择">
               <el-option
                 v-for="item in interfaceOptions"
                 :key="item.value"
@@ -114,7 +114,7 @@ export default {
           label: 'ctp_se'
         }
       ],
-      interface: 'ctp',
+      interfaceName: 'ctp',
       options: [
         {
           value: 'simnow24小时',
@@ -157,7 +157,7 @@ export default {
   },
   methods: {
     handleLogin(data, type) {
-      data['interface'] = this.interface
+      data['interface'] = this.interfaceName
       if (type === 'common') {
         let simnowObj =
           this.simnowValue === 'simnow24小时'
@@ -214,8 +214,6 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #eee;
-  // background: url("~@/assets/bg/2.jpg") no-repeat;
-  // background-image: url('~@/assets/bg/1.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
