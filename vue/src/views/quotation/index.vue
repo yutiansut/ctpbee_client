@@ -68,7 +68,7 @@ export default {
         })
       }
       this.$axios
-        .post(this.quotationUrl, this.$qs.stringify({ symbol: symbol }))
+        .post(this.quotationUrl,{ symbol: symbol })
         .then(res => {
           let returnData = res.data
           sessionStorage.setItem('symbolName', symbol)
@@ -88,7 +88,7 @@ export default {
     },
     getSymbol() {
       this.$axios
-        .put(this.quotationUrl, this.$qs.stringify({ name: 'test' }))
+        .put(this.quotationUrl,{ name: 'test' })
         .then(res => {
           let returnData = res.data
           this.tips({

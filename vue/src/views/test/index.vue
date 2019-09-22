@@ -14,7 +14,12 @@
             <p>回测参数</p>
             <el-form label-position="right">
               <el-form-item>
-                <el-date-picker v-model="startTime" type="date" placeholder="开始时间" style="width:100%"></el-date-picker>
+                <el-date-picker
+                  v-model="startTime"
+                  type="date"
+                  placeholder="开始时间"
+                  style="width:100%"
+                ></el-date-picker>
               </el-form-item>
               <el-form-item>
                 <el-date-picker v-model="endTime" type="date" placeholder="结束时间" style="width:100%"></el-date-picker>
@@ -175,7 +180,7 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ],
-      testData:[
+      testData: [
         {
           date: '2016-05-02',
           name: '王小虎',
@@ -225,11 +230,11 @@ export default {
           label: '北京烤鸭'
         }
       ],
-      retreatValue:'',
+      retreatValue: '',
       //开始时间
-      startTime:'',
+      startTime: '',
       //结束时间
-      endTime:''
+      endTime: ''
     }
   },
   components: {
@@ -254,10 +259,9 @@ export default {
   methods: {
     //获取K线数据
     async getKlineData() {
-      let { data: returnData } = await this.$axios.post(
-        this.klineUrl,
-        this.$qs.stringify({ local_symbol: sessionStorage.getItem('symbolName')})
-      )
+      let { data: returnData } = await this.$axios.post(this.klineUrl, {
+        local_symbol: sessionStorage.getItem('symbolName')
+      })
       this.tips({
         type: returnData.success,
         msg: returnData.msg,
@@ -301,7 +305,7 @@ export default {
     },
     getSymbol() {
       this.$axios
-        .put(this.quotationUrl, this.$qs.stringify({ name: 'test' }))
+        .put(this.quotationUrl, { name: 'test' })
         .then(res => {
           let returnData = res.data
           this.tips({
@@ -327,7 +331,7 @@ export default {
 <style lang='scss'>
 .test {
   padding: 20px;
-  #sizeIcon{
+  #sizeIcon {
     display: none;
   }
   .kline_card {

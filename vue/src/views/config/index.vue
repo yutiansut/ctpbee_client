@@ -117,7 +117,7 @@ export default {
     },
     updateConfig(data) {
       this.$axios
-        .put(this.configUrl, this.$qs.stringify(data))
+        .put(this.configUrl,data)
         .then(res => {
           let returnData = res.data
           this.tips({

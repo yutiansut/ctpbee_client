@@ -32,7 +32,10 @@
               <span v-if="scope.row.levelname==='INFO'" style="color:#67C23A">{{scope.row.message}}</span>
               <span v-if="scope.row.levelname==='ERROR'" style="color:red">{{scope.row.message}}</span>
               <span v-if="scope.row.levelname==='DEBUG'" style="color:#EF6FE9">{{scope.row.message}}</span>
-              <span v-if="scope.row.levelname==='WARNING'" style="color:#89C800">{{scope.row.message}}</span>
+              <span
+                v-if="scope.row.levelname==='WARNING'"
+                style="color:#89C800"
+              >{{scope.row.message}}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -337,7 +340,7 @@ export default {
       data['type'] = this.type
       data['direction'] = transactionType === 'buy' ? 'long' : 'short'
       this.$axios
-        .post(this.orderUrl, this.$qs.stringify(data))
+        .post(this.orderUrl, data)
         .then(res => {
           let returnData = res.data
           this.tips({
@@ -385,7 +388,7 @@ export default {
         direction: val.direction
       }
       this.$axios
-        .post(this.positionUrl, this.$qs.stringify(sendData))
+        .post(this.positionUrl, sendData)
         .then(res => {
           let returnData = res.data
           console.log(returnData)
@@ -401,10 +404,9 @@ export default {
     },
     //获取K线数据
     async getKlineData() {
-      let { data: returnData } = await this.$axios.post(
-        this.klineUrl,
-        this.$qs.stringify({ local_symbol: this.orderForm.local_symbol })
-      )
+      let { data: returnData } = await this.$axios.post(this.klineUrl, {
+        local_symbol: this.orderForm.local_symbol
+      })
 
       this.tips({
         type: returnData.success,

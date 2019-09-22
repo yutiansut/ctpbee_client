@@ -112,7 +112,7 @@ export default {
     },
     modify(data) {
       this.$axios
-        .put(this.modifyUrl, this.$qs.stringify(data))
+        .put(this.modifyUrl,data)
         .then(res => {
           let returnData = res.data;
            this.tips({
@@ -131,7 +131,7 @@ export default {
     },
     servelogout(data) {
       this.$axios
-        .post(this.serveUrl, this.$qs.stringify(data))
+        .post(this.serveUrl, data)
         .then(res => {
           let returnData = res.data;
           this.tips({

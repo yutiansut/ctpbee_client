@@ -16,10 +16,12 @@ const URL = 'http://10.40.25.15:5000/'
 axios.defaults.baseURL = URL
 //请求拦截器
 axios.interceptors.request.use(config => {
-  config.headers.Authorization = 'JWT '+sessionStorage.getItem('token')
+  config.headers.Authorization = 'JWT ' + sessionStorage.getItem('token')
+  if (config.method === 'post'||config.method === 'put') {
+    config.data = qs.stringify(config.data)
+  }
   return config
 })
-Vue.prototype.$qs = qs
 
 //使用ElementUI
 Vue.use(ElementUI, {})

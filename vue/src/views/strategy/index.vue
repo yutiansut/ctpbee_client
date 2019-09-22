@@ -62,10 +62,7 @@ export default {
     },
     deal(name, operation) {
       this.$axios
-        .put(
-          this.strategyUrl,
-          this.$qs.stringify({ name: name, operation: operation })
-        )
+        .put(this.strategyUrl, { name: name, operation: operation })
         .then(res => {
           let returnData = res.data
           this.tips({
@@ -111,7 +108,7 @@ export default {
                 success: () => {
                   this.getStrategyData()
                 }
-              })  
+              })
             })
             .catch(err => {
               console.log(err)

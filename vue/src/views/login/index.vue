@@ -168,7 +168,7 @@ export default {
         }
       }
       this.$axios
-        .post(this.loginUrl, this.$qs.stringify(data))
+        .post(this.loginUrl,data)
         .then(res => {
           let returnData = res.data
           this.tips({

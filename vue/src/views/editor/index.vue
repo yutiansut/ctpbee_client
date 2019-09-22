@@ -250,7 +250,7 @@ ext = StrategyClass('strategy_name')
     },
     updateOrAdd(code) {
       this.$axios
-        .post(this.updateUrl, this.$qs.stringify({ text: code }))
+        .post(this.updateUrl,{ text: code })
         .then(res => {
           let returnData = res.data
 
@@ -267,7 +267,7 @@ ext = StrategyClass('strategy_name')
     },
     run(code) {
       this.$axios
-        .post(this.sendUrl, this.$qs.stringify({ text: code }))
+        .post(this.sendUrl,{ text: code })
         .then(res => {
           this.returnData = res.data.data
           this.drawer = true
